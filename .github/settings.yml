@@ -3,9 +3,9 @@
 #
 
 repository:
-  name: bevel
-  description: An automation framework for rapidly and consistently deploying production-ready DLT platforms
-  homepage: https://github.com/hyperledger/bevel
+  name: bevel-samples
+  description: Bevel-Samples repository holds sample reference applications that can be deployed on bevel deployed blockchain networks
+  homepage: https://github.com/hyperledger/bevel-samples
   default_branch: main
   has_downloads: true
   has_issues: true

@@ -1,126 +1,123 @@
-# Hyperledger Bevel [![join the chat][chat-image]][chat-url]
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+[//]: # (##############################################################################################)
+[//]: # (Copyright Accenture. All Rights Reserved.)
+[//]: # (SPDX-License-Identifier: Apache-2.0)
+[//]: # (##############################################################################################)
 
-[chat-url]: https://discord.gg/hyperledger
-[chat-image]: https://img.shields.io/discord/905194001349627914?logo=Hyperledger&style=plastic.svg
+# Supplychain
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE) [![Documentation Status](https://readthedocs.org/projects/hyperledger-bevel/badge/?version=latest)](https://hyperledger-bevel.readthedocs.io/en/latest/?badge=latest) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3548/badge)](https://bestpractices.coreinfrastructure.org/projects/3548)
-[![DCI Lint Status](https://github.com/hyperledger/bevel/actions/workflows/dci_lint.yml/badge.svg)](https://github.com/hyperledger/bevel/actions/workflows/dci_lint.yml)
+One of the two reference applications for Bevel, is the Supplychain usecase. On this page, we will describe the usecase and its models, as well as pre-requisites to set it up yourself.
 
-- [Short Description](#short-description)
-- [Scope of Project](#scope-of-project)
-  - [Getting Started](#getting-started)
-  - [Hyperledger Fabric](#hyperledger-fabric)
-  - [Corda Enterprise](#corda-enterprise)
-  - [Corda Opensource](#corda-opensource)
-  - [Hyperledger Indy](#hyperledger-indy)
-  - [Quorum](#quorum)
-  - [Hyperledger Besu](#hyperledger-besu)
-- [Contact](#contact)
-- [Contributing](#contributing)
-- [Initial Committers](#initial-committers)
-- [Sponsor](#sponsor)
+## Use case description
+The Supplychain reference application is an example of a common usecase for a blockchain; the supplychain. The application defines a consortium of multiple organizations. The application allows nodes to track products or goods along their chain of custody. It provides the members of the consortium all the relevant data to their product. 
 
-## Short Description
-An automation framework for rapidly and consistently deploying production-ready Distributed Ledger Technology (DLT) platforms.
+The application has been implemented for Hyperledger Fabric, Quorum and R3 Corda, with support for Hyperledger Besu coming soon. The platforms will slightly differ in behavior, but follow the same principles. 
 
-## Scope of Project
-Hyperledger Bevel delivers an automation framework for rapidly and consistently deploying production-ready DLT platforms to cloud infrastructure.
+---
 
-![What is Hyperledger Bevel?](./docs/images/hyperledger-bevel-overview.png "What is Hyperledger Bevel?")
+In the context of the supplychain, there are two types of items that can be tracked, products and containers. Below you will find a definition of the item and its properties:
 
-Hyperledger Bevel makes use of Ansible, Helm, and Kubernetes to deploy production DLT networks. Specifically, it makes use of Ansible for configuration of the network by DevOps Engineers. It then uses Helm charts as instructions for deploying the necessary components to Kubernetes. Kubernetes was chosen to allow for Hyperledger Bevel to deploy the DLT networks to any cloud that supports Kubernetes.
+**Product**
 
-Hyperledger Bevel currently supports Corda, Hyperledger Fabric, Hyperledger Indy and Quorum. It is the intention to add support for Hyperledger Besu and Corda Enterprise in the near future. Other DLT platforms can easily be added.
-
-### Getting Started
-
-To get started with the framework quickly, follow our [Getting Started guidelines](https://hyperledger-bevel.readthedocs.io/en/latest/gettingstarted.html).
-
-Detailed operator and developer documentation is available on [our ReadTheDocs site](https://hyperledger-bevel.readthedocs.io/en/latest/index.html).
-
-The documentation can also be built locally be following instructions in the `docs` folder.
-
-### Hyperledger Fabric
-For Hyperledger Fabric, we use the official Docker containers provided by that project. A number of different Ansible scripts will allow you to either create a new network (across clouds) or join an existing network.
-
-![Hyperledger Bevel - Fabric](./docs/images/hyperledger-bevel-fabric.png "Hyperledger Bevel for Hyperledger Fabric")
-
-### Corda Enterprise
-For Corda Enterprise, we build Docker containers from the Corda source with licensed jars. A number of different Ansible scripts will allow you to either create a new network (across clouds) or join an existing network.
-
-![Hyperledger Bevel - Corda Enterprise](./docs/images/hyperledger-bevel-corda-ent.png "Hyperledger Bevel for Corda Enterprise")
-
-### Corda Opensource
-For Corda Opensource, we build Docker containers from the Corda source. A number of different Ansible scripts will allow you to either create a new network (across clouds) or join an existing network.
-
-![Hyperledger Bevel - Corda](./docs/images/hyperledger-bevel-corda.png "Hyperledger Bevel for Corda")
-
-### Hyperledger Indy
-For Hyperledger Indy, we build Docker containers from our source code. A number of different Ansible scripts will allow you to create a new network (across clouds).
-
-![Hyperledger Bevel - Indy](./docs/images/hyperledger-bevel-indy.png "Hyperledger Bevel for Hyperledger Indy")
-
-### Quorum
-For Quorum, we use the official Docker containers provided by Quorum. A number of different Ansible scripts will allow you to either create a new network (across clouds) with choice of Consensus (between IBFT and RAFT) and a choice of Transaction Manager (between Tessera and Constellation).
-
-![Hyperledger Bevel - Quorum](./docs/images/hyperledger-bevel-quorum.png "Hyperledger Bevel for Quorum")
-
-### Hyperledger Besu
-For Hyperledger Besu, we use the official Docker containers provided by that project. A number of different Ansible scripts will allow you to create a new network (across clouds).
-
-![Hyperledger Bevel - Besu](./docs/images/hyperledger-bevel-besu.png "Hyperledger Bevel for Hyperledger Besu")
-
-## Contact
-We welcome your questions & feedback on our [Discord channel](https://discord.com/channels/905194001349627914/941739691336679454). [Please join our Discord first](https://discord.gg/hyperledger).
-
-## Contributing
-We welcome contributions to Hyperledger Bevel in many forms, and there’s always plenty to do!
-
-Please review [contributing](./CONTRIBUTING.md) guidelines to get started.
-
-# Build
-If you are not using the provided Jenkins automation scripts, you can run the provisioning scripts within a docker runtime independent from your target Kubernetes cluster.
-```
-# Build provisioning image
-docker build . -t hyperledgerlabs/baf-build
-
-# Run the provisioning scripts
-docker run -it -v $(pwd):/home/bevel/ hyperledgerlabs/baf-build
-```
-
-## Initial Committers
-- [tkuhrt](https://github.com/tkuhrt)
-- [jonathan-m-hamilton](https://github.com/jonathan-m-hamilton)
-- [sownak](https://github.com/sownak)
+| Field  | Description                                                          |
+|----------|------------------------------------------------------------------------------------|
+| `trackingID`           | A predefined unique UUID                                                                                                                                      |
+| `type`                 | The type for the object, in this case `product`                                                                                                               |
+| `productName`          | The name of the product                                                                                                                                       |
+| `health`*              | Data from IOT sensors regarding condition of the item                                                                                                         |
+| `location`             | The current location of the product, included in any requests sent to the blockchain                                                                          |
+| `sold`                 | Boolean value that tracks if the product has been sold, `false` by default                                                                                    |
+| `recalled`             | Boolean value that tracks if the product has been recalled, `false` by default                                                                                |
+| `containerID`          | The ID of the container which a product can be packaged in. <br> If there is a container, additional info is read from the `ContainerState` (described below) |
+| `custodian`            | Details of the current holder of the item.  <br> In the supplychain, a product will change custodian multiple times in the chain of custody                   |
+| `timestamp`            | Timestamp at which most recent change of custodian occurred                                                                                                   |
+| `participants`         | List of parties that have been part of the chain of custody for the given product                                                                             |
 
 
-## Sponsor
-Mark Wagner (Github: [n1zyz](https://github.com/n1zyz), email: [mwagner@redhat.com](mailto:mwagner@redhat.com)) - TSC Member
+\* `health` - The blockchain will only store `min`, `max` and `average` values. The value currently is obsolete and not used, but in place for any future updates should these enable the value.
 
-## Contributors ✨
+The creator of the product will be marked as its initial custodian.  As a custodian, a node is able to package and unpackage goods. 
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+---
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/alvaropicazo"><img src="https://avatars.githubusercontent.com/u/76157062?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alvaro Picazo</b></sub></a><br /><a href="#maintenance-alvaropicazo" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/suvajit-sarkar"><img src="https://avatars.githubusercontent.com/u/55580532?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Suvajit Sarkar</b></sub></a><br /><a href="https://github.com/hyperledger/bevel/commits?author=suvajit-sarkar" title="Code">💻</a> <a href="https://github.com/hyperledger/bevel/commits?author=suvajit-sarkar" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/deepakkumardbd"><img src="https://avatars.githubusercontent.com/u/57094817?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Deepak Kumar</b></sub></a><br /><a href="https://github.com/hyperledger/bevel/commits?author=deepakkumardbd" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/jagpreetsinghsasan"><img src="https://avatars.githubusercontent.com/u/56861721?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jagpreet Singh Sasan</b></sub></a><br /><a href="https://github.com/hyperledger/bevel/commits?author=jagpreetsinghsasan" title="Code">💻</a> <a href="#maintenance-jagpreetsinghsasan" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/angelaalagbe"><img src="https://avatars.githubusercontent.com/u/54588164?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Angela.Alagbe</b></sub></a><br /><a href="https://github.com/hyperledger/bevel/commits?author=angelaalagbe" title="Documentation">📖</a> <a href="#content-angelaalagbe" title="Content">🖋</a></td>
-    <td align="center"><a href="https://github.com/mgCepeda"><img src="https://avatars.githubusercontent.com/u/83813093?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marina Gómez Cepeda</b></sub></a><br /><a href="https://github.com/hyperledger/bevel/commits?author=mgCepeda" title="Code">💻</a></td>
-  </tr>
-</table>
+**Container/ContainerState**
 
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
+When handling an item, you can package it. It then stores data in an object called `ContainerState`, which is structured as such:
 
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+| Field                  | Description                                                                                                                                                   |
+|-------------|-----------------------------------------------------------------------------------|
+| `trackingID`           | A predefined unique UUID                                                                                                                                      |
+| `type`                 | The type for the object, in this case `container`                                                                                                             |
+| `health`*              | Data from IOT sensors regarding condition of the item                                                                                                         |
+| `location`             | The current location of the product, included in any requests sent to the blockchain                                                                          |
+| `containerID`          | The ID of the current container, which the product is packaged in                                                                                            |
+| `custodian`            | Details of the current holder of the item.  <br> In the supplychain, the container will change custodian multiple times in the chain of custody               |
+| `timestamp`            | Timestamp at which most recent change of custodian occurred                                                                                                   |
+| `contents`             | List of items that are currently in the container                                                                                                             |
+| `participants`         | List of parties that have been part of the chain of custody for the given container                                                                             |
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+\* `health` - The blockchain will only store `min`, `max` and `average` values. The value currently is obsolete and not used, but in place for any future updates should these enable the value.
+
+Products being packaged will have their `trackingID` added to the contents list of the container. The product will be updated when its container is updated. If a product is contained it can no longer be handled directly (i.e. transfer ownership of a single product while still in a container with others).
+
+Any of the participants can execute methods to claim custodianship of a product or container. History can be extracted via transactions stored on the ledger/within the vault.
+
+---
+
+## Prerequisites
+
+* The supplychain application requires that nodes have subject names that include a location field in the x.509 name formatted as such:
+`L=<lat>/<long>/<city>`
+* DLT network of 1 or more organizations; a complete supplychain network would have the following organizations
+    - Supplychain (admin/orderer organization) 
+    - Carrier
+    - Store
+    - Warehouse
+    - Manufacturer
+
+## Setup Guide
+
+The setup process has been automated using Ansible scripts, GitOps, and Helm charts. 
+
+The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
+1. Create a copy of the `network.yaml` you have used to set up your network.
+2. For each organization, navigate to the `gitops` section. Here, the `chart_source` field will change. The value needs to be changed to `examples/supplychain-app/charts`.
+This is the relative location of the Helm charts for the supplychain app.
+3. Make sure that you have deployed the smart contracts for the platform of choice; along with the correct `network.yaml` for the DLT.
+    - For R3 Corda, run the `platforms\r3-corda\configuration\deploy-cordapps.yaml`
+    - For Hyperledger Fabric, run the `platforms/hyperledger-fabric/configuration/chaincode-ops.yaml`
+    - For Quorum, no smart contracts need to be deployed beforehand.
+
+## Deploying the supplychain-app
+When having completed the Prerequisites and setup guide, deploy the supplychain app by executing the following command:
+
+`ansible-playbook examples/supplychain-app/configuration/deploy-supplychain-app.yaml -e "@/path/to/application/network.yaml"`
+
+## Testing/validating the supplychain-app
+For testing the application, there are API tests included. For instructions on how to set this up, follow the `README.md` [here](https://github.com/hyperledger/bevel/tree/main/examples/supplychain-app/tests).
+
+---
+# Indy RefApp
+
+## Use case description
+Welcome to the Indy Ref App which allows nodes to implement the concept of digital identities using blockchain.
+There are 3 components
+- Alice: Alice is the end user and a student.
+- Faber: Faber is the university.
+- Indy Webserver
+
+In this usecase, Alice obtains a Credential from Faber College regarding the transcript. A connection is build between Faber College and Alice (onboarding process).Faber College creates and sends a Credential Offer to Alice. Alice creates a Credential Request and sends it to Faber College.Faber College creates the Credential for Alice. 
+Alice now receives the Credential and stores it in her wallet.
+
+
+
+## Pre-requisites
+A network with 2 organizations:
+- Authority
+    - 1 Trustee
+- University
+    - 4 Steward nodes
+    - 1 Endorser
+A Docker repository
+
+
+Find more at [Indy-Ref-App](https://github.com/hyperledger/bevel/tree/main/examples/identity-app)
