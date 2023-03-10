@@ -38,7 +38,7 @@
     "pugjs-brunch": "2.10.2",
     "react-dom": "^16.14.0",
     "rimraf": "^2.6.3",
-    "stylus-brunch": "2.10.0",
+    "stylus-brunch": "3.0.0",
     "uglify-js-brunch": "2.10.0"
   }
 }
