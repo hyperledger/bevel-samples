@@ -22,7 +22,7 @@ spec:
       name: {{ name }}-restserver
       port: {{ peer_restserver_port }}
       localmspid: {{ name }}MSP
-      image: {{ network.docker.url | lower }}/bevel-supplychain-fabric:rest-server-stable
+      image: {{ network.docker.url | lower }}/bevel-supplychain-frontend:latest
       username: user1
       cert_path: "/secret/tls/user1.cert"
       key_path: "/secret/tls/user1.pem"
