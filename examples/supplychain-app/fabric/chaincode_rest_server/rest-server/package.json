@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Rest Server for Fabric Supply Chain App",
   "main": "dist/server.js",
+  "private": true,
   "scripts": {
     "build-ts": "tsc",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
@@ -11,7 +12,7 @@
     "start": "yarn run serve"
   },
   "engines": {
-    "node": "^8.9.0"
+    "node": "16.17.0"
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.0",
@@ -21,17 +22,17 @@
     "@types/koa__cors": "^2.2.2",
     "@types/node": "^10.7.0",
     "module-alias": "^2.1.0",
-    "nodemon": "^1.17.4",
+    "nodemon": "^2.0.21",
     "prettier": "^1.15.3",
-    "tslint": "^5.10.0",
-    "tslint-config-prettier": "^1.17.0",
-    "tslint-consistent-codestyle": "^1.15.0",
-    "typescript": "^3.0.1"
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-consistent-codestyle": "^1.16.0",
+    "typescript": "^5.0.2"
   },
   "dependencies": {
     "@koa/cors": "^2.2.1",
-    "class-transformer": "^0.3.1",
-    "class-validator": "^0.9.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "dotenv": "^6.0.0",    
     "fabric-network": "^1.4.0",
     "js-yaml": "^3.13.1",
@@ -39,8 +40,8 @@
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "reflect-metadata": "^0.1.12",
-    "ts-node": "^7.0.1",
-    "tsconfig-paths": "^3.7.0",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.2",
     "winston": "^3.0.0"
   },
   "_moduleAliases": {
