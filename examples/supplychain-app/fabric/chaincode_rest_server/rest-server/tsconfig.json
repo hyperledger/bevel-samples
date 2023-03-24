@@ -12,7 +12,8 @@
     "paths": {
       "src/*": ["src/"],
       "dist/*": ["dist/"]
-    }
+    },
+    "skipLibCheck": true
   },
   "include": ["src/**/*"]
 }

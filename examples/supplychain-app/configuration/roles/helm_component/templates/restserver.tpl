@@ -13,8 +13,8 @@ spec:
     chart: {{ component_gitops.chart_source }}/fabric-restserver
     sourceRef:
       kind: GitRepository
-      name: flux-{{ network.env.type }}
-      namespace: flux-{{ network.env.type }}
+      name: flux-{{ network.env.type }}-app
+      namespace: flux-{{ network.env.type }}-app
   values:
     metadata:
       namespace: {{ component_ns }}
@@ -22,7 +22,7 @@ spec:
       name: {{ name }}-restserver
       port: {{ peer_restserver_port }}
       localmspid: {{ name }}MSP
-      image: {{ network.docker.url | lower }}/bevel-supplychain-frontend:latest
+      image: {{ network.docker.url }}/bevel-supplychain-fabric:rest-server-latest
       username: user1
       cert_path: "/secret/tls/user1.cert"
       key_path: "/secret/tls/user1.pem"
