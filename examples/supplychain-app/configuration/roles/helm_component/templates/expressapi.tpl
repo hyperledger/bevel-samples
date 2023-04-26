@@ -11,8 +11,8 @@ spec:
       chart: {{ component_gitops.chart_source }}/expressapp
       sourceRef:
         kind: GitRepository
-        name: flux-{{ network.env.type }}
-        namespace: flux-{{ network.env.type }}
+        name: flux-{{ network.env.type }}-app
+        namespace: flux-{{ network.env.type }}-app
   releaseName: {{ peer_name }}{{ network.type }}-expressapi
   interval: 1m
   values:

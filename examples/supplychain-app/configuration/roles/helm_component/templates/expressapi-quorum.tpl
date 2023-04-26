@@ -13,8 +13,8 @@ spec:
     chart: {{ component_gitops.chart_source }}/expressapp-quorum
     sourceRef:
       kind: GitRepository
-      name: flux-{{ network.env.type }}
-      namespace: flux-{{ network.env.type }}
+      name: flux-{{ network.env.type }}-app
+      namespace: flux-{{ network.env.type }}-app
   values:
     nodeName: {{ name }}-expressapi
     metadata:
