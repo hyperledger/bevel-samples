@@ -1,0 +1,47 @@
+##############################################################################################
+#  Copyright Accenture. All Rights Reserved.
+#
+#  SPDX-License-Identifier: Apache-2.0
+##############################################################################################
+
+---
+# Deletes all k8s native flux resources
+- name: Delete all k8s native flux resources
+  include_tasks: nested.yaml
+  vars:
+    resource_type: "{{ item }}"
+    api_version: "v1"
+    namespace: "flux-{{ network.env.type }}-app"
+  with_items:
+    - ["Deployment", "Service", "NetworkPolicy","ServiceAccount", "Secret"]
+
+# Deletes Deployments related to flux
+- name: Delete all Flux sources
+  include_tasks: nested.yaml
+  vars:
+    resource_type: "{{ item }}"
+    api_version: "source.toolkit.fluxcd.io/v1beta2"
+    namespace: "flux-{{ network.env.type }}-app"
+    remove_finalizers: true
+  with_items:
+    - ["GitRepository", "HelmChart"]
+
+# Deletes Deployments related to flux
+- name: Delete all Flux Kustomization
+  include_tasks: nested.yaml
+  vars:
+    resource_type: "{{ item }}"
+    api_version: "kustomize.toolkit.fluxcd.io/v1beta2"
+    namespace: "flux-{{ network.env.type }}-app"
+    remove_finalizers: true
+  with_items:
+    - ["Kustomization"]
+
+# Remove the existing flux namespace
+- name: Remove an existing flux-{{ network.env.type }}-app namespace
+  k8s:
+    state: absent
+    kind: Namespace
+    kubeconfig: "{{ kubernetes.config_file }}"
+    namespace: flux-{{ network.env.type }}-app
+    name: flux-{{ network.env.type }}-app
