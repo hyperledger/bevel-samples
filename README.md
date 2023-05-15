@@ -11,6 +11,10 @@ You can use Bevel samples to set-up real world examples using Hyperledger Bevel,
 
 To use the Bevel samples, you need to first have a DLT network that you have deployed using Hyperledger Bevel. Ensure that you have installed all of the [Bevel prerequisites](https://hyperledger-bevel.readthedocs.io/en/latest/prerequisites.html). You can then follow the instructions to [install your choice of DLT network](https://hyperledger-bevel.readthedocs.io/en/latest/operationalguide.html).
 
+Following three samples are provided with Hyperledger Bevel
+- [Supplychain Application](#supplychain-application)
+- [Distributed Identity Application](#distributed-identity-application)
+- [DSCP Application](dscp-application)
 
 ## Supplychain Application
 The Supplychain reference application is an example of a common usecase for a blockchain: the supplychain. The application defines a consortium of multiple organizations. The application allows nodes to track products or goods along their chain of custody. It provides the members of the consortium all the relevant data to their product. 
