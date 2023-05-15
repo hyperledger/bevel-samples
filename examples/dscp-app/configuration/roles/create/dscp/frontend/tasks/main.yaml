@@ -1,0 +1,70 @@
+##############################################################################################
+#  Copyright Accenture. All Rights Reserved.
+#
+#  SPDX-License-Identifier: Apache-2.0
+##############################################################################################
+
+#Check if the pods for the organizations are up and running
+- name: "Waiting for api pod {{ peer.name }} in {{ component_ns }}"
+  include_role:
+    name: "{{ playbook_dir }}/../../../platforms/shared/configuration/roles/check/helm_component"
+  vars:
+    component_type: "Pod"
+    namespace: "{{ component_ns }}"
+    component_name: "{{ peer.name }}-inteli-api"
+    kubernetes: "{{ org.k8s }}"
+    label_selectors:
+      - name = {{ component_name }}
+  loop: "{{ org.services.peers }}"
+  loop_control:
+    loop_var: peer
+  when: 
+    - peer.api is defined
+    - peer.frontend is defined
+
+# Store auth client secret and id keys into vault
+- name: "Store auth client secret and id keys in vault"
+  shell: |
+     vault kv put {{ component_vault.secret_path | default('secretsv2') }}/{{ component_ns }}/auth frontendClientId="{{ org.frontendAuth.clientId }}" mapKey="{{ org.frontendAuth.mapKey }}"
+  environment:
+    VAULT_ADDR: "{{ component_vault.url }}"
+    VAULT_TOKEN: "{{ component_vault.root_token }}"
+  when: org.frontendAuth.enabled == true
+
+# This task creates the docker pull credentials for image registry
+- name: "Create docker credentials secret"
+  include_role:
+    name: "create/shared_k8s_secrets"
+  vars: 
+    namespace: "{{ component_ns }}"    
+    check: "docker_credentials"
+    component_name: "{{ org.name }}"
+    kubernetes: "{{ org.k8s }}"
+
+# Create api values file for the peer nodes
+- name: "Create frontend values file for all peers"
+  include_role:
+    name: helm_component
+  vars:
+    type: "dscp-frontend"
+    component_name: "{{ peer.name }}-web"
+    name: "{{ peer.name }}"
+    charts_dir: "examples/dscp-app/charts"
+    inteliApiAddr: "https://{{ peer.name }}-inteli-api.{{ org.external_url_suffix }}/v1/"
+    persona: "{{ org.persona }}"
+  loop: "{{ org.services.peers }}"
+  loop_control:
+    loop_var: peer
+  when: 
+    - peer.api is defined
+    - peer.frontend is defined
+
+# Push the api deployment files to repository
+- name: "Push the created deployment files to repository"
+  include_role: 
+    name: "{{ playbook_dir }}/../../../platforms/shared/configuration/roles/git_push"
+  vars:
+    GIT_DIR: "{{ playbook_dir }}/../../../"
+    gitops: "{{ component_gitops }}"
+    GIT_RESET_PATH: "platforms/substrate/configuration"
+    msg: "[ci skip] Pushing deployment files for dscp frontend"

@@ -1,0 +1,158 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inteli-frontend.fullname" . }}
+  labels:
+    {{- include "inteli-frontend.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      name: {{ include "inteli-frontend.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        name: {{ include "inteli-frontend.fullname" . }}
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      - name: {{ $.Values.image.pullSecrets }}
+      {{- end }}
+      serviceAccountName: {{ .Values.vault.serviceaccountname }} 
+      initContainers:
+        - name: vault-init
+          image: {{ .Values.vault.alpineutils }}
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: config
+            mountPath: /secret
+          env:
+          - name: VAULT_ADDR
+            value: {{ .Values.vault.address }}
+          - name: VAULT_SECRET_PREFIX
+            value: {{ .Values.vault.secretprefix }}
+          - name: KUBERNETES_AUTH_PATH
+            value: {{ .Values.vault.authpath }}
+          - name: VAULT_APP_ROLE
+            value: {{ .Values.vault.role }}
+          - name: MOUNT_PATH
+            value: "/secret"
+          command: ["sh", "-c"]
+          args:
+          - |-
+            #!/usr/bin/env sh
+            validateVaultResponse () {
+                if echo ${2} | grep "errors"; then
+                  echo "ERROR: unable to retrieve ${1}: ${2}"
+                  exit 1
+                fi
+                if  [ "$3" == "LOOKUPSECRETRESPONSE" ]
+                then
+                  http_code=$(curl -sS -o /dev/null -w "%{http_code}" \
+                  --header "X-Vault-Token: ${VAULT_CLIENT_TOKEN}" \
+                  ${VAULT_ADDR}/v1/${vault_secret_key})
+                  curl_response=$?
+                  if test "$http_code" != "200" ; then
+                      echo "Http response code from Vault - $http_code"
+                      if test "$curl_response" != "0"; then
+                        echo "Error: curl command failed with error code - $curl_response"
+                        exit 1
+                      fi
+                  fi
+                fi
+              }
+              KUBE_SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              echo "Getting secrets from Vault Server: ${VAULT_ADDR}"
+
+              #Login to Vault and so I can get an approle token
+              VAULT_CLIENT_TOKEN=$(curl -sS --request POST ${VAULT_ADDR}/v1/auth/${KUBERNETES_AUTH_PATH}/login \
+                -H "Content-Type: application/json" \
+                -d '{"role":"'"${VAULT_APP_ROLE}"'","jwt":"'"${KUBE_SA_TOKEN}"'"}' | \
+                jq -r 'if .errors then . else .auth.client_token end')
+              validateVaultResponse 'vault login token' "${VAULT_CLIENT_TOKEN}"
+              echo "Logged into Vault"
+  
+              vault_secret_key="${VAULT_SECRET_PREFIX}/auth"
+
+              echo "Getting the auth keys from vault: $vault_secret_key"          
+              LOOKUP_SECRET_RESPONSE=$(curl -sS \
+                --header "X-Vault-Token:${VAULT_CLIENT_TOKEN}" \
+                ${VAULT_ADDR}/v1/${vault_secret_key} | \
+                jq -r 'if .errors then . else . end')
+              validateVaultResponse "secret (${vault_secret_key})" "${LOOKUP_SECRET_RESPONSE}" "LOOKUPSECRETRESPONSE"
+              frontendClientKey=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["frontendClientId"]')
+              mapKey=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["mapKey"]')
+              echo -n "${frontendClientKey}" > ${MOUNT_PATH}/frontendClientKey
+              echo -n "${mapKey}" > ${MOUNT_PATH}/mapKey
+      containers:
+        - name: inteli-frontend
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          {{- if .Values.config.enableLivenessProbe }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 3
+            periodSeconds: 10
+          {{- end }}
+          volumeMounts:
+          - name: config
+            mountPath: /secret
+          command: ["sh", "-c"]
+          args:
+          - |-
+            #!/usr/bin/env sh
+
+            export REACT_APP_AUTH0_CLIENTID=$(cat /secret/frontendClientKey)
+            export REACT_APP_GMAPS_KEY=$(cat /secret/mapKey)
+
+            npm run build
+            serve -s build -p $PORT
+          env:
+            - name: REACT_APP_AUTH0_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "inteli-frontend.fullname" . }}-config
+                  key: frontendDomain
+            - name: REACT_APP_AUTH0_SCOPE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "inteli-frontend.fullname" . }}-config
+                  key: frontendScope
+            - name: REACT_APP_AUTH0_API_AUDIENCE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "inteli-frontend.fullname" . }}-config
+                  key: inteliApiAudience
+            - name: REACT_APP_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "inteli-frontend.fullname" . }}-config
+                  key: inteliApiAddress
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "inteli-frontend.fullname" . }}-config
+                  key: frontendPort
+            - name: REACT_APP_LOGO
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "inteli-frontend.fullname" . }}-config
+                  key: logoPath
+            - name: REACT_APP_KINAXIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "inteli-frontend.fullname" . }}-config
+                  key: kinaxisUrl
+            - name: REACT_APP_PERSONA
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "inteli-frontend.fullname" . }}-config
+                  key: persona
+      volumes:
+        - name: config
+          emptyDir:
+            medium: Memory

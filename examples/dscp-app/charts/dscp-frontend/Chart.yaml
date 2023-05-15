@@ -1,0 +1,12 @@
+##############################################################################################
+#  Copyright Accenture. All Rights Reserved.
+#
+#  SPDX-License-Identifier: Apache-2.0
+##############################################################################################
+
+apiVersion: v2
+name: dscp-frontend
+appVersion: '1.1.7'
+description: A Helm chart for inteli-frontend
+version: '1.1.7'
+type: application

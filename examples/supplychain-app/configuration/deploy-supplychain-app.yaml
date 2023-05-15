@@ -27,9 +27,10 @@
       git_protocol: "{{ item.gitops.git_protocol | default('https') }}"
       git_url: "{{ item.gitops.git_url }}"
       git_key: "{{ item.gitops.private_key | default() }}"
-      flux_version: "0.30.2"
+      flux_version: "0.35.0"
       bin_install_dir:  "~/bin"
     with_items: "{{ network.organizations }}"
+
   - name: Copy test env files to build directory
     copy:
       src: "{{ item }}"

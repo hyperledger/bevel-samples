@@ -1,0 +1,21 @@
+##############################################################################################
+#  Copyright Accenture. All Rights Reserved.
+#
+#  SPDX-License-Identifier: Apache-2.0
+##############################################################################################
+
+---
+# This tasks generate flux-automation helmrelease file
+- name: "Create value file for flux-automation"
+  include_role:
+    name: "helm_component"
+  vars:  
+    type: "fluxautomation"
+    name: "auto"
+    component_name: "{{ image.name }}"
+    component_branch: "{{ org.gitops.branch }}"
+    component_repo: "{{ image.repo }}"
+    component_policy: "{{ image.policy }}"
+    component_filter: "{{ image.filter }}"
+    charts_dir: "platforms/shared/charts"
+    values_dir: "{{ playbook_dir }}/../../../{{ org.gitops.release_dir }}"

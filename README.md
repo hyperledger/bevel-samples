@@ -3,67 +3,21 @@
 [//]: # (SPDX-License-Identifier: Apache-2.0)
 [//]: # (##############################################################################################)
 
-# Supplychain
+# Hyperledger Bevel Samples
 
-One of the two reference applications for Bevel, is the Supplychain usecase. On this page, we will describe the usecase and its models, as well as pre-requisites to set it up yourself.
+You can use Bevel samples to set-up real world examples using Hyperledger Bevel, and learn how to build applications that can interact with blockchain networks using the different APIs offered by DLT networks. To learn more about Hyperledger Bevel, visit the [Bevel documentation](https://hyperledger-bevel.readthedocs.io/en/latest).
 
-## Use case description
-The Supplychain reference application is an example of a common usecase for a blockchain; the supplychain. The application defines a consortium of multiple organizations. The application allows nodes to track products or goods along their chain of custody. It provides the members of the consortium all the relevant data to their product. 
+## Getting started with the Bevel samples
 
-The application has been implemented for Hyperledger Fabric, Quorum and R3 Corda, with support for Hyperledger Besu coming soon. The platforms will slightly differ in behavior, but follow the same principles. 
-
----
-
-In the context of the supplychain, there are two types of items that can be tracked, products and containers. Below you will find a definition of the item and its properties:
-
-**Product**
-
-| Field  | Description                                                          |
-|----------|------------------------------------------------------------------------------------|
-| `trackingID`           | A predefined unique UUID                                                                                                                                      |
-| `type`                 | The type for the object, in this case `product`                                                                                                               |
-| `productName`          | The name of the product                                                                                                                                       |
-| `health`*              | Data from IOT sensors regarding condition of the item                                                                                                         |
-| `location`             | The current location of the product, included in any requests sent to the blockchain                                                                          |
-| `sold`                 | Boolean value that tracks if the product has been sold, `false` by default                                                                                    |
-| `recalled`             | Boolean value that tracks if the product has been recalled, `false` by default                                                                                |
-| `containerID`          | The ID of the container which a product can be packaged in. <br> If there is a container, additional info is read from the `ContainerState` (described below) |
-| `custodian`            | Details of the current holder of the item.  <br> In the supplychain, a product will change custodian multiple times in the chain of custody                   |
-| `timestamp`            | Timestamp at which most recent change of custodian occurred                                                                                                   |
-| `participants`         | List of parties that have been part of the chain of custody for the given product                                                                             |
+To use the Bevel samples, you need to first have a DLT network that you have deployed using Hyperledger Bevel. Ensure that you have installed all of the [Bevel prerequisites](https://hyperledger-bevel.readthedocs.io/en/latest/prerequisites.html). You can then follow the instructions to [install your choice of DLT network](https://hyperledger-bevel.readthedocs.io/en/latest/operationalguide.html).
 
 
-\* `health` - The blockchain will only store `min`, `max` and `average` values. The value currently is obsolete and not used, but in place for any future updates should these enable the value.
+## Supplychain Application
+The Supplychain reference application is an example of a common usecase for a blockchain: the supplychain. The application defines a consortium of multiple organizations. The application allows nodes to track products or goods along their chain of custody. It provides the members of the consortium all the relevant data to their product. 
 
-The creator of the product will be marked as its initial custodian.  As a custodian, a node is able to package and unpackage goods. 
+The application has been implemented for Hyperledger Fabric, Quorum and R3 Corda, with full support for Hyperledger Besu coming soon. The platforms will slightly differ in behavior, but follow the same principles.
 
----
-
-**Container/ContainerState**
-
-When handling an item, you can package it. It then stores data in an object called `ContainerState`, which is structured as such:
-
-| Field                  | Description                                                                                                                                                   |
-|-------------|-----------------------------------------------------------------------------------|
-| `trackingID`           | A predefined unique UUID                                                                                                                                      |
-| `type`                 | The type for the object, in this case `container`                                                                                                             |
-| `health`*              | Data from IOT sensors regarding condition of the item                                                                                                         |
-| `location`             | The current location of the product, included in any requests sent to the blockchain                                                                          |
-| `containerID`          | The ID of the current container, which the product is packaged in                                                                                            |
-| `custodian`            | Details of the current holder of the item.  <br> In the supplychain, the container will change custodian multiple times in the chain of custody               |
-| `timestamp`            | Timestamp at which most recent change of custodian occurred                                                                                                   |
-| `contents`             | List of items that are currently in the container                                                                                                             |
-| `participants`         | List of parties that have been part of the chain of custody for the given container                                                                             |
-
-\* `health` - The blockchain will only store `min`, `max` and `average` values. The value currently is obsolete and not used, but in place for any future updates should these enable the value.
-
-Products being packaged will have their `trackingID` added to the contents list of the container. The product will be updated when its container is updated. If a product is contained it can no longer be handled directly (i.e. transfer ownership of a single product while still in a container with others).
-
-Any of the participants can execute methods to claim custodianship of a product or container. History can be extracted via transactions stored on the ledger/within the vault.
-
----
-
-## Prerequisites
+### Prerequisites
 
 * The supplychain application requires that nodes have subject names that include a location field in the x.509 name formatted as such:
 `L=<lat>/<long>/<city>`
@@ -74,32 +28,32 @@ Any of the participants can execute methods to claim custodianship of a product 
     - Warehouse
     - Manufacturer
 
-## Setup Guide
+### Setup Guide
 
 The setup process has been automated using Ansible scripts, GitOps, and Helm charts. 
 
 The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
-1. Create a copy of the `network.yaml` you have used to set up your network.
-2. For each organization, navigate to the `gitops` section. Here, the `chart_source` field will change. The value needs to be changed to `examples/supplychain-app/charts`.
-This is the relative location of the Helm charts for the supplychain app.
-3. Make sure that you have deployed the smart contracts for the platform of choice; along with the correct `network.yaml` for the DLT.
-    - For R3 Corda, run the `platforms\r3-corda\configuration\deploy-cordapps.yaml`
+1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it. Check samples in `examples/supplychain-app/configuration/samples`.
+1. Update the `chart_source` to `examples/supplychain-app/charts` and `release_dir` to `examples/supplychain-app/releases/dev` for each organization in the `gitops` section.
+1. Make sure that you have deployed the smart contracts for the platform of choice; along with the correct `network.yaml` for the DLT.
+    - For R3 Corda, run the `platforms/r3-corda/configuration/deploy-cordapps.yaml`
     - For Hyperledger Fabric, run the `platforms/hyperledger-fabric/configuration/chaincode-ops.yaml`
     - For Quorum, no smart contracts need to be deployed beforehand.
 
-## Deploying the supplychain-app
+### Deploying the supplychain-app
 When having completed the Prerequisites and setup guide, deploy the supplychain app by executing the following command:
 
 `ansible-playbook examples/supplychain-app/configuration/deploy-supplychain-app.yaml -e "@/path/to/application/network.yaml"`
 
-## Testing/validating the supplychain-app
-For testing the application, there are API tests included. For instructions on how to set this up, follow the `README.md` [here](https://github.com/hyperledger/bevel/tree/main/examples/supplychain-app/tests).
+### Testing/validating the supplychain-app
+For testing the application, there are API tests included. For instructions on how to set this up, follow the `README.md` [here](examples/supplychain-app/tests/README.md).
+
+More details [here](examples/supplychain-app/README.md).
 
 ---
-# Indy RefApp
+## Distributed Identity Application
 
-## Use case description
-Welcome to the Indy Ref App which allows nodes to implement the concept of digital identities using blockchain.
+The Distributed Identity app (Indy Ref App) allows nodes to implement the concept of digital identities using blockchain.
 There are 3 components
 - Alice: Alice is the end user and a student.
 - Faber: Faber is the university.
@@ -109,9 +63,8 @@ In this usecase, Alice obtains a Credential from Faber College regarding the tra
 Alice now receives the Credential and stores it in her wallet.
 
 
-
-## Pre-requisites
-A network with 2 organizations:
+### Prerequisites
+An Indy network deployed using Bevel with 2 organizations:
 - Authority
     - 1 Trustee
 - University
@@ -119,5 +72,59 @@ A network with 2 organizations:
     - 1 Endorser
 A Docker repository
 
+### Setup Guide
 
-Find more at [Indy-Ref-App](https://github.com/hyperledger/bevel/tree/main/examples/identity-app)
+The setup process has been automated using Ansible scripts, GitOps, and Helm charts. 
+
+The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
+1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it.
+1. Update the `chart_source` to `examples/identity-app/charts` and `release_dir` to `examples/identity-app/releases/dev` for each organization in the `gitops` section.
+1. Make sure that the required docker images are built and stored on the repository.
+
+### Deploying the identity-app
+When having completed the Prerequisites and setup guide, deploy the identity app by executing the following command:
+
+`ansible-playbook examples/identity-app/configuration/deploy-identity-app.yaml -e "@/path/to/application/network.yaml"`
+
+### Testing/validating the identity-app
+For testing the application, there are API tests included. For instructions on how to set this up, follow the `README.md` [here](examples/identity-app/tests/README.md).
+
+More details [here](examples/identity-app/README.md).
+
+---
+## DSCP Application
+
+The DSCP (Digital Supply Chain Platform) application demonstrates benefits of distributed systems using a Substrate-based Blockchain network. There are three personas here: 
+- OEM: Original Equipment manufacturer and the Buyer.
+- TierOne: The main supplier.
+- TierTwo: Third party supplier(s).
+
+The main differentiator for this iuse case is its usage of Substrate-based Node: [dscp-node](https://github.com/inteli-poc/dscp-node). The usecase covers generic buyer-supplier transactions like order placement, acceptance, goods status update, transport and 3-way match. Additional feature is that this use cases uses IPFS to share files like test reports, lab conformity tests, and other documentation needed in an additive manufacturing industry.
+
+### Prerequisites
+A DSCP network deployed using Bevel with 3 organizations:
+- OEM
+- TierOne
+- TierTwo
+
+### Setup Guide
+
+The setup process has been automated using Ansible scripts, GitOps, and Helm charts. 
+
+The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
+1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it. Check samples in `examples/dscp-app/configuration/samples`.
+1. Update the `chart_source` to `examples/dscp-app/charts` and `release_dir` to `examples/dscp-app/releases/dev` for each organization in the `gitops` section.
+1. Make sure that the required docker images are built and stored on the repository.
+
+### Deploying the dscp-app
+When having completed the Prerequisites and setup guide, deploy the DSCP app by executing the following command:
+
+`ansible-playbook examples/dscp-app/configuration/deploy-dscp-app.yaml -e "@/path/to/application/network.yaml"`
+
+### Testing/validating the dscp-app
+For testing the application, there are API tests included. For instructions on how to set this up, follow the `README.md` [here](examples/dscp-app/tests/README.md).
+
+More details [here](examples/dscp-app/README.md).
+
+## License
+Hyperledger Bevel source code files are made available under the Apache License, Version 2.0 (Apache-2.0), located in the LICENSE file. Hyperledger Bevel documentation files are made available under the Creative Commons Attribution 4.0 International License (CC-BY-4.0), available at http://creativecommons.org/licenses/by/4.0/.

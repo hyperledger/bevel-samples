@@ -1,0 +1,46 @@
+##############################################################################################
+#  Copyright Accenture. All Rights Reserved.
+#
+#  SPDX-License-Identifier: Apache-2.0
+##############################################################################################
+
+# Create id-service values file for the peer nodes
+- name: "Create id-service values file for all peers"
+  include_role:
+    name: helm_component
+  vars:
+    type: "dscp-id-service"
+    component_name: "{{ peer.name }}-id-service"
+    name: "{{ peer.name }}"
+    charts_dir: "examples/dscp-app/charts"
+    db_address: "{{ peer.name }}-postgresql"
+  loop: "{{ org.services.peers }}"
+  loop_control:
+    loop_var: peer
+  when: (peer.postgresql is defined) and (peer.id_service is defined)
+
+# Push the id-service deployment files to repository
+- name: "Push the created deployment files to repository"
+  include_role: 
+    name: "{{ playbook_dir }}/../../../platforms/shared/configuration/roles/git_push"
+  vars:
+    GIT_DIR: "{{ playbook_dir }}/../../../"
+    gitops: "{{ component_gitops }}"
+    GIT_RESET_PATH: "platforms/substrate/configuration"
+    msg: "[ci skip] Pushing deployment files for dscp id-service"
+
+# Wait for id-service Pod to run
+- name: "Waiting for id-service pod in {{ component_ns }}"
+  include_role:
+    name: "{{ playbook_dir }}/../../../platforms/shared/configuration/roles/check/helm_component"
+  vars:
+    component_type: "Pod"
+    namespace: "{{ component_ns }}"
+    component_name: "{{ peer.name }}-id-service"
+    kubernetes: "{{ org.k8s }}"
+    label_selectors:
+      - name = {{ component_name }}
+  loop: "{{ org.services.peers }}"
+  loop_control:
+    loop_var: peer
+  when: (peer.postgresql is defined) and (peer.id_service is defined)

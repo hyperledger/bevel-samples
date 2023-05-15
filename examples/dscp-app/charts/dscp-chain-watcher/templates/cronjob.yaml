@@ -1,0 +1,223 @@
+##############################################################################################
+#  Copyright Accenture. All Rights Reserved.
+#
+#  SPDX-License-Identifier: Apache-2.0
+##############################################################################################
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "chain-watcher.fullname" . }}-cron-job
+  labels:
+    app.kubernetes.io/name: {{ include "chain-watcher.fullname" . }}-cron-job
+spec:
+  schedule: "*/1 22 * * *" #Everyday at 22:01
+  jobTemplate:
+    spec:
+      backoffLimit: 6
+      template:
+        metadata:
+          labels:
+            app: {{ include "chain-watcher.fullname" . }}-cron-job
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            fsGroup: 1000
+          serviceAccountName: {{ .Values.vault.serviceaccountname }}   
+          initContainers:
+            - name: vault-init
+              image: {{ .Values.vault.alpineutils }}
+              imagePullPolicy: Always
+              volumeMounts:
+                - name: config
+                  mountPath: /secret
+              env:
+              - name: VAULT_ADDR
+                value: {{ .Values.vault.address }}
+              - name: VAULT_SECRET_PREFIX
+                value: {{ .Values.vault.secretprefix }}
+              - name: KUBERNETES_AUTH_PATH
+                value: {{ .Values.vault.authpath }}
+              - name: VAULT_APP_ROLE
+                value: {{ .Values.vault.role }}
+              - name: AUDIENCE
+                value: {{ .Values.config.inteliApiAudience }}
+              - name: GRANT_TYPE
+                value: {{ .Values.config.inteliApiGrant }}
+              - name: TOKEN_ADDR
+                value: {{ .Values.config.inteliApiTokenAddr }}
+              - name: INTELI_HOST
+                value: {{ .Values.config.inteliApiHost }}
+              - name: INTELI_PORT
+                valueFrom:
+                  configMapKeyRef:
+                    name: {{ include "chain-watcher.fullname" . }}-config
+                    key: inteliApiPort
+              - name: FETCH_GCP_KEY
+                valueFrom:
+                  configMapKeyRef:
+                    name: {{ include "chain-watcher.fullname" . }}-config
+                    key: fetchGcpKey
+              - name: MOUNT_PATH
+                value: "/secret"
+              command: ["sh", "-c"]
+              args:
+              - |-
+                #!/usr/bin/env sh
+                validateVaultResponse () {
+                    if echo ${2} | grep "errors"; then
+                      echo "ERROR: unable to retrieve ${1}: ${2}"
+                      exit 1
+                    fi
+                    if  [ "$3" == "LOOKUPSECRETRESPONSE" ]
+                    then
+                      http_code=$(curl -sS -o /dev/null -w "%{http_code}" \
+                      --header "X-Vault-Token: ${VAULT_CLIENT_TOKEN}" \
+                      ${VAULT_ADDR}/v1/${vault_secret_key})
+                      curl_response=$?
+                      if test "$http_code" != "200" ; then
+                          echo "Http response code from Vault - $http_code"
+                          if test "$curl_response" != "0"; then
+                            echo "Error: curl command failed with error code - $curl_response"
+                            exit 1
+                          fi
+                      fi
+                    fi
+                  }
+                  KUBE_SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+                  echo "Getting secrets from Vault Server: ${VAULT_ADDR}"
+
+                  #Login to Vault and so I can get an approle token
+                  VAULT_CLIENT_TOKEN=$(curl -sS --request POST ${VAULT_ADDR}/v1/auth/${KUBERNETES_AUTH_PATH}/login \
+                    -H "Content-Type: application/json" \
+                    -d '{"role":"'"${VAULT_APP_ROLE}"'","jwt":"'"${KUBE_SA_TOKEN}"'"}' | \
+                    jq -r 'if .errors then . else .auth.client_token end')
+                  validateVaultResponse 'vault login token' "${VAULT_CLIENT_TOKEN}"
+                  echo "Logged into Vault"
+      
+                  if [ "${FETCH_GCP_KEY}" == "true" ]; then
+                    vault_secret_key="${VAULT_SECRET_PREFIX}/gcpkey"
+
+                    echo "Getting the gcp key from vault: $vault_secret_key"          
+                    LOOKUP_SECRET_RESPONSE=$(curl -sS \
+                      --header "X-Vault-Token:${VAULT_CLIENT_TOKEN}" \
+                      ${VAULT_ADDR}/v1/${vault_secret_key} | \
+                      jq -r 'if .errors then . else . end')
+                    validateVaultResponse "secret (${vault_secret_key})" "${LOOKUP_SECRET_RESPONSE}" "LOOKUPSECRETRESPONSE"
+                    gcpKey=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["gcpkey"]')
+                                  
+                    echo -n "${gcpKey}" > ${MOUNT_PATH}/gcpKey.json
+                  fi
+
+                  vault_secret_key_auth="${VAULT_SECRET_PREFIX}/inteliAuth"
+
+                  echo "Getting the auth0 keys from vault: $vault_secret_key_auth"          
+                  LOOKUP_SECRET_RESPONSE=$(curl -sS \
+                    --header "X-Vault-Token:${VAULT_CLIENT_TOKEN}" \
+                    ${VAULT_ADDR}/v1/${vault_secret_key_auth} | \
+                    jq -r 'if .errors then . else . end')
+                  validateVaultResponse "secret (${vault_secret_key_auth})" "${LOOKUP_SECRET_RESPONSE}" "LOOKUPSECRETRESPONSE"
+                  CLIENT_ID=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["clientId"]')
+                  CLIENT_SECRET=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["clientSecret"]')
+
+                  INTELI_API_ADDR="${INTELI_HOST}:${INTELI_PORT}"
+
+                  # Check if the token file is present and valid
+                  if [ -f "${MOUNT_PATH}/token.txt" ]; then
+                      echo "token is present - Checking if token is valid"
+                      
+                      TOKEN=$(cat ${MOUNT_PATH}/token.txt)
+                      
+                      checkResponse=$(curl -s -H "Authorization: Bearer ${TOKEN}" ${INTELI_API_ADDR}/v1/health)
+
+                      if [ "$checkResponse" == "ok" ]; then
+                          echo "response ok - token valid"
+                          exit 0
+                      else
+                          echo "response not ok - generating new token - ERROR: $checkResponse"
+                          jq -n -j --arg ID ${CLIENT_ID} --arg SECRET ${CLIENT_SECRET} --arg AUDIENCE ${AUDIENCE} --arg GRANT ${GRANT_TYPE} '{"client_id": $ID, "client_secret": $SECRET, "audience": $AUDIENCE, "grant_type": $GRANT}' > ${MOUNT_PATH}/data.json
+                          curl -s -X POST -H "Content-Type: application/json" -d @${MOUNT_PATH}/data.json ${TOKEN_ADDR} | jq '.access_token' | tr -d '"' > ${MOUNT_PATH}/token.txt
+                      fi
+
+                  else
+                      #Generate token and mount
+                      echo "token is not present - generating token file"
+                      jq -n -j --arg ID ${CLIENT_ID} --arg SECRET ${CLIENT_SECRET} --arg AUDIENCE ${AUDIENCE} --arg GRANT ${GRANT_TYPE} '{"client_id": $ID, "client_secret": $SECRET, "audience": $AUDIENCE, "grant_type": $GRANT}' > ${MOUNT_PATH}/data.json
+                      curl -s -X POST -H "Content-Type: application/json" -d @${MOUNT_PATH}/data.json ${TOKEN_ADDR} | jq '.access_token' | tr -d '"' > ${MOUNT_PATH}/token.txt
+                  fi
+          containers:
+            - name: {{ include "chain-watcher.fullname" . }}-cron-job
+              image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+              imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+              volumeMounts:
+                - name: config
+                  mountPath: /secret
+              command: ["sh", "-c"]
+              args:
+              - |-
+                #!/usr/bin/env sh
+
+                export GOOGLE_APPLICATION_CREDENTIALS=/secret/gcpKey.json
+                export AUTH_TOKEN=$(cat /secret/token.txt)
+
+                node ./index.js
+              env:
+                - name: DB_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: dbHost
+                - name: DB_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: dbPort
+                - name: DB_NAME
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: dbName
+                - name: DSCP_API_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: dscpApiHost
+                - name: DSCP_API_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: dscpApiPort
+                - name: DB_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-secret
+                      key: dbUsername
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-secret
+                      key: dbPassword
+                - name: IDENTITY_SERVICE_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: idServiceHost
+                - name: IDENTITY_SERVICE_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: idServicePort
+                - name: INTELI_API_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: inteliApiHost
+                - name: INTELI_API_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "chain-watcher.fullname" . }}-config
+                      key: inteliApiPort
+          volumes:
+            - name: config
+              persistentVolumeClaim:
+                claimName: chain-watcher-pvc
