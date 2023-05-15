@@ -7,3 +7,5 @@ examples/supplychain-app/fabric/chaincode_rest_server/chaincode/Gopkg.toml
 # Cordite implementations from another source repo
 images/doorman/**
 images/networkmap/**
+
+examples/dscp-app/charts/postgresql/**
