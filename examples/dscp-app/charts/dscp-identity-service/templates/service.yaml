@@ -1,0 +1,15 @@
+{{ $fullname :=  include "dscp-identity-service.fullname" . }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dscp-identity-service.fullname" . }}
+  labels:
+    {{- include "dscp-identity-service.labels" . | nindent 4 }}
+spec:
+  selector:
+    name: {{ include "dscp-identity-service.fullname" . }}
+  type: NodePort
+  ports:
+    - protocol: 'TCP'
+      port: {{ .Values.config.port }}
+      targetPort: {{ .Values.config.port }}

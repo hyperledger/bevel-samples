@@ -1,0 +1,15 @@
+##############################################################################################
+#  Copyright Accenture. All Rights Reserved.
+#
+#  SPDX-License-Identifier: Apache-2.0
+##############################################################################################
+
+charts:
+  dscp-api: dscp-api
+  dscp-frontend: dscp-frontend
+  certissuer: certissuer
+  postgresql: postgresql
+  dscp-id-service: dscp-identity-service
+  inteli-api: inteli-api
+  dscp-chain-watcher: dscp-chain-watcher
+  fluxautomation: flux-imageautomation

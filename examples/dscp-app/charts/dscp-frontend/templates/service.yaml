@@ -1,0 +1,59 @@
+{{ $fullname :=  include "inteli-frontend.fullname" . }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "inteli-frontend.fullname" . }}
+  labels:
+    {{- include "inteli-frontend.labels" . | nindent 4 }}
+  {{- if eq $.Values.proxy.provider "ambassador" }}
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v2
+      kind: Mapping
+      name: {{ $fullname }}_web_mapping
+      prefix: /      
+      host: {{ .Values.proxy.name }}-web.{{ .Values.proxy.external_url_suffix }}
+      service: {{ $fullname }}:{{ .Values.config.port }}
+      timeout_ms: 200000
+      tls: false      
+      ---
+      apiVersion: ambassador/v2
+      kind: TLSContext
+      name: {{ $fullname }}_mapping_tlscontext
+      hosts:
+      - {{ .Values.proxy.name }}-web.{{ .Values.proxy.external_url_suffix }}
+      secret: {{ .Values.proxy.name }}-web-certs
+      min_tls_version: v1.2
+  {{- end }}
+spec:
+  selector:
+    name: {{ include "inteli-frontend.fullname" . }}
+  type: NodePort
+  ports:
+    - protocol: 'TCP'
+      port: {{ .Values.config.port }}
+      targetPort: {{ .Values.config.port }}
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: {{ .Values.proxy.name }}-web-acme-cm
+spec:
+  host: {{ .Values.proxy.name }}-web.{{ .Values.proxy.external_url_suffix }}
+  prefix: /.well-known/acme-challenge/
+  rewrite: ""
+  service: {{ .Values.proxy.name }}-web-acme-cs
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.proxy.name }}-web-acme-cs
+spec:
+  ports:
+  - port: 80
+    targetPort: 8089
+  selector:
+    acme.cert-manager.io/http01-solver: "true"
+    issuedFor: "{{ .Values.proxy.issuedFor }}"

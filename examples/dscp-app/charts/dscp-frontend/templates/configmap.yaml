@@ -1,0 +1,19 @@
+##############################################################################################
+#  Copyright Accenture. All Rights Reserved.
+#
+#  SPDX-License-Identifier: Apache-2.0
+##############################################################################################
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "inteli-frontend.fullname" . }}-config
+data:
+  frontendDomain: {{ .Values.auth.frontendDomain }}
+  frontendScope: {{ .Values.auth.frontendScope }}
+  inteliApiAudience: {{ .Values.auth.inteliApiAudience }}
+  inteliApiAddress: {{ .Values.config.inteliApiAddr }}
+  frontendPort: {{ .Values.config.port | quote }}
+  logoPath: {{ .Values.config.logo }}
+  kinaxisUrl: {{ .Values.config.kinaxisUrl }}
+  persona: {{ .Values.config.persona }}
