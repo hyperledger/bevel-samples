@@ -20,7 +20,7 @@
         state: absent
 
     - include_role:
-        name:  setup/flux
+        name:  "{{ playbook_dir }}/../../../platforms/shared/configuration/roles/setup/flux"
       vars:
         kubeconfig_path: "{{ item.k8s.config_file }}"
         kubecontext: "{{ item.k8s.context }}"
@@ -34,7 +34,6 @@
         git_url: "{{ item.gitops.git_url }}"
         git_key: "{{ item.gitops.private_key | default() }}"
         flux_version: "0.35.0"
-        bin_install_dir:  "~/bin"
       with_items: "{{ network.organizations }}"  
 
     # Deploy the Indy Webserver for trustee orgs
@@ -68,4 +67,7 @@
       loop_control:
         loop_var: organization
       when: network['type'] == 'indy'
-
+    vars: #These variables can be overriden from the command line
+      install_os: "linux"           # Default to linux OS
+      install_arch:  "amd64"        # Default to amd64 architecture
+      bin_install_dir:  "~/bin"     # Default to /bin install directory for binaries

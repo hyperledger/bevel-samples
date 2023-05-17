@@ -20,6 +20,7 @@ spec:
     fullnameOverride: {{ name }}-chain-watcher
     metadata:
       namespace: {{ component_ns }}
+      storageClass: "{{ org.cloud_provider }}storageclass"
     config:
       dbHost: {{ db_host_addr }}.{{ component_ns }}
       dbPort: {{ peer.postgresql.port }}
@@ -32,10 +33,10 @@ spec:
       idServicePort: {{ peer.id_service.port }}
       inteliApiHost: {{ name }}-{{ peer.inteli_api.db_name }}.{{ component_ns }}
       inteliApiPort: {{ peer.inteli_api.port }}
-      inteliApiAudience: {{ org.auth.audience }}
-      inteliApiGrant: {{ org.auth.grantType }}
-      inteliApiTokenAddr: {{ org.auth.tokenUrl }}
-      fetchGcpKey: {{ fetch_gcp_key }}
+      inteliApiAudience: {{ org.auth.audience | default() }}
+      inteliApiGrant: {{ org.auth.grantType | default() }}
+      inteliApiTokenAddr: {{ org.auth.tokenUrl | default() }}
+      fetchGcpKey: {{ fetch_gcp_key | default() }}
       
     image:
       repository: ghcr.io/inteli-poc/dscp-chain-watcher # {"$imagepolicy": "flux-{{ network.env.type }}:dscp-chain-watcher:name"}

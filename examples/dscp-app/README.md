@@ -16,20 +16,19 @@ dscp-app
    |--inteli-api
    |--postgresql
 |--configuration
+|--releases
+|--tests
 ```
 
 ### Pre-requisites
 
 ***
 
-- Substrate network of one or more organizations. A complete supplychain network will have the following organizations:
+- Substrate DSCP network of one or more organizations. A complete supplychain network will have the following organizations:
   - OEM - Original Equipment Manufacturer (admin organization)
-  - Tier 1 and/or Tier 2 Suppliers
-  - Carrier
-  - Store
-  - Warehouse
-  - Manufacturer
-- IPFS node
+  - Tier 1 Supplier
+  - Tier 2 Supplier
+- IPFS node for each organization
 
 ### Authentication
 

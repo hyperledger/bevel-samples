@@ -25,11 +25,10 @@
 # Store auth client secret and id keys into vault
 - name: "Store auth client secret and id keys in vault"
   shell: |
-     vault kv put {{ component_vault.secret_path | default('secretsv2') }}/{{ component_ns }}/auth frontendClientId="{{ org.frontendAuth.clientId }}" mapKey="{{ org.frontendAuth.mapKey }}"
+     vault kv put {{ component_vault.secret_path | default('secretsv2') }}/{{ component_ns }}/auth frontendClientId="{{ org.frontendAuth.clientId | default() }}" mapKey="{{ org.frontendAuth.mapKey | default() }}"
   environment:
     VAULT_ADDR: "{{ component_vault.url }}"
     VAULT_TOKEN: "{{ component_vault.root_token }}"
-  when: org.frontendAuth.enabled == true
 
 # This task creates the docker pull credentials for image registry
 - name: "Create docker credentials secret"
@@ -66,5 +65,5 @@
   vars:
     GIT_DIR: "{{ playbook_dir }}/../../../"
     gitops: "{{ component_gitops }}"
-    GIT_RESET_PATH: "platforms/substrate/configuration"
+    GIT_RESET_PATH: "examples/dscp-app/configuration"
     msg: "[ci skip] Pushing deployment files for dscp frontend"

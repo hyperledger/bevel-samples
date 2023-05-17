@@ -14,7 +14,7 @@
   no_log: "{{ no_ansible_log | default(false) }}"
   tasks:
   - include_role:
-      name:  setup/flux
+      name:  "{{ playbook_dir }}/../../../platforms/shared/configuration/roles/setup/flux"
     vars:
       kubeconfig_path: "{{ item.k8s.config_file }}"
       kubecontext: "{{ item.k8s.context }}"
@@ -28,8 +28,7 @@
       git_url: "{{ item.gitops.git_url }}"
       git_key: "{{ item.gitops.private_key | default() }}"
       flux_version: "0.35.0"
-      bin_install_dir:  "~/bin"
-    with_items: "{{ network.organizations }}" 
+    with_items: "{{ network.organizations }}"
     
   # Setup letsencrypt cert-manager
   - name: "Setup cert-manager"
@@ -65,10 +64,6 @@
       component_gitops: "{{ org.gitops }}"
       component_vault: "{{ org.vault }}"
       auth_type: "{{ org.auth.type }}"
-      auth_jwksUri: "{{ org.auth.jwksUri }}"
-      auth_audience: "{{ org.auth.audience }}"
-      auth_issuer: "{{ org.auth.issuer }}"
-      auth_tokenUrl: "{{ org.auth.tokenUrl }}"
       values_dir: "{{ playbook_dir }}/../../../{{ org.gitops.release_dir }}/{{ org.name | lower }}"
     loop: "{{ network['organizations'] }}"
     loop_control:
@@ -99,10 +94,6 @@
       component_gitops: "{{ org.gitops }}"
       component_vault: "{{ org.vault }}"
       auth_type: "{{ org.auth.type }}"
-      auth_jwksUri: "{{ org.auth.jwksUri }}"
-      auth_audience: "{{ org.auth.audience }}"
-      auth_issuer: "{{ org.auth.issuer }}"
-      auth_tokenUrl: "{{ org.auth.tokenUrl }}"
       values_dir: "{{ playbook_dir }}/../../../{{ org.gitops.release_dir }}/{{ org.name | lower }}"
     loop: "{{ network['organizations'] }}"
     loop_control:
@@ -118,10 +109,6 @@
       component_gitops: "{{ org.gitops }}"
       external_suffix: "{{ org.external_url_suffix }}"
       auth_type: "{{ org.auth.type }}"
-      auth_jwksUri: "{{ org.auth.jwksUri }}"
-      auth_audience: "{{ org.auth.audience }}"
-      auth_issuer: "{{ org.auth.issuer }}"
-      auth_tokenUrl: "{{ org.auth.tokenUrl }}"
       values_dir: "{{ playbook_dir }}/../../../{{ org.gitops.release_dir }}/{{ org.name | lower }}"
     loop: "{{ network['organizations'] }}"
     loop_control:
@@ -165,3 +152,10 @@
     loop: "{{ network['organizations'] }}"
     loop_control:
       loop_var: org
+    when: 
+    - docker.autodeploy is defined
+  
+  vars: #These variables can be overriden from the command line
+    install_os: "linux"           # Default to linux OS
+    install_arch:  "amd64"        # Default to amd64 architecture
+    bin_install_dir:  "~/bin"     # Default to /bin install directory for binaries

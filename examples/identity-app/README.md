@@ -37,9 +37,9 @@ Make sure that Docker image of agents is on your Docker registry.
 If you do not have the Docker image on your Docker registry, then build and push them.
 Please follow [Documentation](./images/agents/README.md) 
 ### Step 3
-Prepare a network.yaml file for your demo by following this sample for [AWS](../../platforms/hyperledger-indy/configuration/samples/network-indyv3-aries.yaml) or [Minikube](../../platforms/hyperledger-indy/configuration/samples/network-minikube-aries.yaml) and update relevant sections.
+Prepare a network.yaml file for your demo by following this sample for [AWS](https://github.com/hyperledger/bevel/blob/main/platforms/hyperledger-indy/configuration/samples/network-indyv3-aries.yaml) or [Minikube](https://github.com/hyperledger/bevel/blob/main/platforms/hyperledger-indy/configuration/samples/network-minikube-aries.yaml) and update relevant sections.
 ### Step 4
-Run Ansible Playbook by following these [steps](../../platforms/hyperledger-indy/configuration/README.md)
+Run Ansible Playbook by following these [steps](https://github.com/hyperledger/bevel/tree/main/platforms/hyperledger-indy/configuration)
 Can be started also via Docker container:
 1. Go to root directory of this git repository.
 2. Run command: `docker run -it -v $(pwd):/home/bevel/ --entrypoint bash hyperledgerlabs/baf-build`

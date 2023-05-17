@@ -16,6 +16,7 @@ config:
   persona:
 
 auth:
+  enabled: false
   frontendDomain: 
   frontendScope:
   inteliApiAudience:

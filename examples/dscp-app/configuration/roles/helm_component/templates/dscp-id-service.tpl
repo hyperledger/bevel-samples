@@ -29,10 +29,12 @@ spec:
       selfAddress: 
       auth:
         type: NONE
-        jwksUri: {{ auth_jwksUri }}
-        audience: {{ auth_audience }}
-        issuer: {{ auth_issuer }}
-        tokenUrl: {{ auth_tokenUrl }}
+{% if auth_type == 'JWT' %}
+        jwksUri: {{ org.auth.jwksUri }}
+        audience: {{ org.auth.audience }}
+        issuer: {{ org.auth.issuer }}
+        tokenUrl: {{ org.auth.tokenUrl }}
+{% endif %}
     ingress:
       enabled: false
       # annotations: {}

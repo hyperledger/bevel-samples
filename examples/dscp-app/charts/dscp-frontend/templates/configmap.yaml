@@ -9,9 +9,11 @@ kind: ConfigMap
 metadata:
   name: {{ include "inteli-frontend.fullname" . }}-config
 data:
+ {{- if .Values.auth.enabled }}
   frontendDomain: {{ .Values.auth.frontendDomain }}
   frontendScope: {{ .Values.auth.frontendScope }}
   inteliApiAudience: {{ .Values.auth.inteliApiAudience }}
+{{- end }}
   inteliApiAddress: {{ .Values.config.inteliApiAddr }}
   frontendPort: {{ .Values.config.port | quote }}
   logoPath: {{ .Values.config.logo }}

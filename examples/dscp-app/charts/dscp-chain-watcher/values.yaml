@@ -2,6 +2,7 @@ fullnameOverride:
 
 metadata:
   namespace:
+  storageClass: 
 
 config:
   dbHost:

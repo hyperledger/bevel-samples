@@ -109,41 +109,50 @@ spec:
                     echo -n "${gcpKey}" > ${MOUNT_PATH}/gcpKey.json
                   fi
 
-                  vault_secret_key_auth="${VAULT_SECRET_PREFIX}/inteliAuth"
+                  if [ "${AUDIENCE}" != "" ]; then
+                    vault_secret_key_auth="${VAULT_SECRET_PREFIX}/inteliAuth"
 
-                  echo "Getting the auth0 keys from vault: $vault_secret_key_auth"          
-                  LOOKUP_SECRET_RESPONSE=$(curl -sS \
-                    --header "X-Vault-Token:${VAULT_CLIENT_TOKEN}" \
-                    ${VAULT_ADDR}/v1/${vault_secret_key_auth} | \
-                    jq -r 'if .errors then . else . end')
-                  validateVaultResponse "secret (${vault_secret_key_auth})" "${LOOKUP_SECRET_RESPONSE}" "LOOKUPSECRETRESPONSE"
-                  CLIENT_ID=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["clientId"]')
-                  CLIENT_SECRET=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["clientSecret"]')
+                    echo "Getting the auth0 keys from vault: $vault_secret_key_auth"          
+                    LOOKUP_SECRET_RESPONSE=$(curl -sS \
+                      --header "X-Vault-Token:${VAULT_CLIENT_TOKEN}" \
+                      ${VAULT_ADDR}/v1/${vault_secret_key_auth} | \
+                      jq -r 'if .errors then . else . end')
+                    validateVaultResponse "secret (${vault_secret_key_auth})" "${LOOKUP_SECRET_RESPONSE}" "LOOKUPSECRETRESPONSE"
+                    CLIENT_ID=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["clientId"]')
+                    CLIENT_SECRET=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["clientSecret"]')
+                  fi
 
                   INTELI_API_ADDR="${INTELI_HOST}:${INTELI_PORT}"
+                  checkResponse=$(curl -s ${INTELI_API_ADDR}/health)
 
-                  # Check if the token file is present and valid
-                  if [ -f "${MOUNT_PATH}/token.txt" ]; then
-                      echo "token is present - Checking if token is valid"
-                      
-                      TOKEN=$(cat ${MOUNT_PATH}/token.txt)
-                      
-                      checkResponse=$(curl -s -H "Authorization: Bearer ${TOKEN}" ${INTELI_API_ADDR}/v1/health)
-
-                      if [ "$checkResponse" == "ok" ]; then
-                          echo "response ok - token valid"
-                          exit 0
-                      else
-                          echo "response not ok - generating new token - ERROR: $checkResponse"
-                          jq -n -j --arg ID ${CLIENT_ID} --arg SECRET ${CLIENT_SECRET} --arg AUDIENCE ${AUDIENCE} --arg GRANT ${GRANT_TYPE} '{"client_id": $ID, "client_secret": $SECRET, "audience": $AUDIENCE, "grant_type": $GRANT}' > ${MOUNT_PATH}/data.json
-                          curl -s -X POST -H "Content-Type: application/json" -d @${MOUNT_PATH}/data.json ${TOKEN_ADDR} | jq '.access_token' | tr -d '"' > ${MOUNT_PATH}/token.txt
-                      fi
-
+                  if [ "$checkResponse" == "ok" ]; then
+                    echo "response ok - no token required"
+                    exit 0
                   else
-                      #Generate token and mount
-                      echo "token is not present - generating token file"
-                      jq -n -j --arg ID ${CLIENT_ID} --arg SECRET ${CLIENT_SECRET} --arg AUDIENCE ${AUDIENCE} --arg GRANT ${GRANT_TYPE} '{"client_id": $ID, "client_secret": $SECRET, "audience": $AUDIENCE, "grant_type": $GRANT}' > ${MOUNT_PATH}/data.json
-                      curl -s -X POST -H "Content-Type: application/json" -d @${MOUNT_PATH}/data.json ${TOKEN_ADDR} | jq '.access_token' | tr -d '"' > ${MOUNT_PATH}/token.txt
+                    echo "response not ok - token required"
+                    # Check if the token file is present and valid
+                    if [ -f "${MOUNT_PATH}/token.txt" ]; then
+                        echo "token is present - Checking if token is valid"
+                        
+                        TOKEN=$(cat ${MOUNT_PATH}/token.txt)
+                        
+                        checkResponse=$(curl -s -H "Authorization: Bearer ${TOKEN}" ${INTELI_API_ADDR}/v1/health)
+
+                        if [ "$checkResponse" == "ok" ]; then
+                            echo "response ok - token valid"
+                            exit 0
+                        else
+                            echo "response not ok - generating new token - ERROR: $checkResponse"
+                            jq -n -j --arg ID ${CLIENT_ID} --arg SECRET ${CLIENT_SECRET} --arg AUDIENCE ${AUDIENCE} --arg GRANT ${GRANT_TYPE} '{"client_id": $ID, "client_secret": $SECRET, "audience": $AUDIENCE, "grant_type": $GRANT}' > ${MOUNT_PATH}/data.json
+                            curl -s -X POST -H "Content-Type: application/json" -d @${MOUNT_PATH}/data.json ${TOKEN_ADDR} | jq '.access_token' | tr -d '"' > ${MOUNT_PATH}/token.txt
+                        fi
+
+                    else
+                        #Generate token and mount
+                        echo "token is not present - generating token file"
+                        jq -n -j --arg ID ${CLIENT_ID} --arg SECRET ${CLIENT_SECRET} --arg AUDIENCE ${AUDIENCE} --arg GRANT ${GRANT_TYPE} '{"client_id": $ID, "client_secret": $SECRET, "audience": $AUDIENCE, "grant_type": $GRANT}' > ${MOUNT_PATH}/data.json
+                        curl -s -X POST -H "Content-Type: application/json" -d @${MOUNT_PATH}/data.json ${TOKEN_ADDR} | jq '.access_token' | tr -d '"' > ${MOUNT_PATH}/token.txt
+                    fi
                   fi
           containers:
             - name: {{ include "chain-watcher.fullname" . }}-cron-job

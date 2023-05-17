@@ -19,7 +19,9 @@
   environment:
     VAULT_ADDR: "{{ component_vault.url }}"
     VAULT_TOKEN: "{{ component_vault.root_token }}"
-  when: org.auth is defined
+  when: 
+  - org.auth is defined
+  - org.auth.type == 'JWT'
 
 # Create chain-watcher values file for oem node
 - name: "Create chain-watcher values file for oem peer"
@@ -62,5 +64,5 @@
   vars:
     GIT_DIR: "{{ playbook_dir }}/../../../"
     gitops: "{{ component_gitops }}"
-    GIT_RESET_PATH: "platforms/substrate/configuration"
+    GIT_RESET_PATH: "examples/dscp-app/configuration"
     msg: "[ci skip] Pushing deployment files for chain-watcher"

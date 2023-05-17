@@ -112,6 +112,7 @@ spec:
             npm run build
             serve -s build -p $PORT
           env:
+          {{- if .Values.auth.enabled }}
             - name: REACT_APP_AUTH0_DOMAIN
               valueFrom:
                 configMapKeyRef:
@@ -127,6 +128,7 @@ spec:
                 configMapKeyRef:
                   name: {{ include "inteli-frontend.fullname" . }}-config
                   key: inteliApiAudience
+            {{- end }}
             - name: REACT_APP_BASE_URL
               valueFrom:
                 configMapKeyRef:

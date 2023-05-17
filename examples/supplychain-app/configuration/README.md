@@ -39,7 +39,7 @@ network:
     git_url: "git_url"
     branch: "git_branch"
     release_dir: "platforms/r3-corda/releases/dev"  
-    chart_source: "platforms/r3-corda/charts"
+    chart_source: "examples/supplychain-app/charts"
     username: "git_username"
     password: "git_password"
     private_key: "path_to_private_key"
