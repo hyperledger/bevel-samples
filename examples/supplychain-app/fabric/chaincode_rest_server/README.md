@@ -151,7 +151,7 @@ NOTE: the test details will be cached so you could use `go clean` if you will be
 
 ### Update Chaincode deployed
 
-To update chaincode running on a clusters, use the `platforms/hyperledger-fabric/configuration/chaincode-upgrade.yaml` playbook. 
+To update chaincode running on a clusters, follow [these instructions](https://hyperledger-bevel.readthedocs.io/en/latest/operations/upgrading_chaincode.html). 
 The input network.yaml should be updated with a new version of chaincode. Please do not use dot(.) in chaincode versions.
 
 
@@ -196,7 +196,7 @@ printf '%s\n' y | ./byfn.sh up -s couchdb -o etcdraft
 3. Copy the chaincode from Hyperledger Bevel repository and put it in the CLI container
 ```
 export CLI_CONTAINER_ID="$(docker ps -a | grep cli | awk '{print $1}')"
-git clone https://github.com/hyperledger/bevel.git
+git clone https://github.com/hyperledger/bevel-samples.git
 cd bevel
 git checkout develop
 docker cp $PWD/examples/supplychain-app/fabric/chaincode_rest_server/chaincode/ $CLI_CONTAINER_ID:/opt/gopath/src/github.com/chaincode/

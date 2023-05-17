@@ -128,6 +128,7 @@ spec:
                 configMapKeyRef:
                   name: {{ include "dscp-api.fullname" . }}-config
                   key: ipfsPort
+            {{- if eq .Values.config.auth.type "JWT" }}
             - name: AUTH_JWKS_URI
               valueFrom:
                 configMapKeyRef:
@@ -148,6 +149,7 @@ spec:
                 configMapKeyRef:
                   name: {{ include "dscp-api.fullname" . }}-config
                   key: authTokenUrl
+            {{- end }}
             - name: SUBSTRATE_STATUS_POLL_PERIOD_MS
               valueFrom:
                 configMapKeyRef:

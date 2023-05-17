@@ -31,7 +31,7 @@
   vars:
     GIT_DIR: "{{ playbook_dir }}/../../../"
     gitops: "{{ component_gitops }}"
-    GIT_RESET_PATH: "platforms/hyperledger-fabric/configuration"
+    GIT_RESET_PATH: "examples/supplychain-app/configuration"
     msg: "[ci skip] Pushing deployment files for fabric expressapi"
   when: component_type == 'peer'
 

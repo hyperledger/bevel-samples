@@ -38,7 +38,11 @@ The setup process has been automated using Ansible scripts, GitOps, and Helm cha
 
 The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
 1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it. Check samples in `examples/supplychain-app/configuration/samples`.
-1. Update the `chart_source` to `examples/supplychain-app/charts` and `release_dir` to `examples/supplychain-app/releases/dev` for each organization in the `gitops` section.
+1. You must update the `env.type` so that another Flux can be deployed.
+
+1. Update the following for each organization in the `gitops` section.
+    - `git_url` and `git-repo` to your bevel-samples repo
+    - `chart_source` to `examples/supplychain-app/charts`
 1. Make sure that you have deployed the smart contracts for the platform of choice; along with the correct `network.yaml` for the DLT.
     - For R3 Corda, run the `platforms/r3-corda/configuration/deploy-cordapps.yaml`
     - For Hyperledger Fabric, run the `platforms/hyperledger-fabric/configuration/chaincode-ops.yaml`
@@ -82,7 +86,12 @@ The setup process has been automated using Ansible scripts, GitOps, and Helm cha
 
 The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
 1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it.
-1. Update the `chart_source` to `examples/identity-app/charts` and `release_dir` to `examples/identity-app/releases/dev` for each organization in the `gitops` section.
+
+1. You must update the `env.type` so that another Flux can be deployed.
+1. Update the following for each organization in the `gitops` section.
+    - `git_url` and `git-repo` to your bevel-samples repo
+    - `chart_source` to `examples/identity-app/charts`
+
 1. Make sure that the required docker images are built and stored on the repository.
 
 ### Deploying the identity-app
@@ -117,8 +126,12 @@ The setup process has been automated using Ansible scripts, GitOps, and Helm cha
 
 The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
 1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it. Check samples in `examples/dscp-app/configuration/samples`.
-1. Update the `chart_source` to `examples/dscp-app/charts` and `release_dir` to `examples/dscp-app/releases/dev` for each organization in the `gitops` section.
-1. Make sure that the required docker images are built and stored on the repository.
+1. You must update the `env.type` so that another Flux can be deployed.
+1. Update the following for each organization in the `gitops` section.
+    - `git_url` and `git-repo` to your bevel-samples repo
+    - `chart_source` to `examples/dscp-app/charts`
+
+1. Ensure that the required docker images are built and stored on the repository.
 
 ### Deploying the dscp-app
 When having completed the Prerequisites and setup guide, deploy the DSCP app by executing the following command:

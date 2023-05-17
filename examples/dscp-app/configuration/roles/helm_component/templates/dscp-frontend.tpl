@@ -27,9 +27,12 @@ spec:
       kinaxisUrl: https://na1.kinaxis.net/web/ACCD01_DEM01/
       persona: {{ persona }}
     auth:
+      enabled: {{ org.frontendAuth.enabled }}
+{% if org.frontendAuth.enabled %}
       frontendDomain: {{ org.frontendAuth.domain }}
       frontendScope: {{ org.frontendAuth.scope }}
       inteliApiAudience: {{ org.auth.audience }}
+{% endif %}
     ingress:
       enabled: false
       className: "gce"

@@ -42,7 +42,7 @@
   vars:
     GIT_DIR: "{{ playbook_dir }}/../../../"
     gitops: "{{ component_gitops }}"
-    GIT_RESET_PATH: "platforms/substrate/configuration"
+    GIT_RESET_PATH: "examples/dscp-app/configuration"
     msg: "[ci skip] Pushing deployment files for dscp api"
 
 # Wait for api Pod to run
