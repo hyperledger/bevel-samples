@@ -122,14 +122,8 @@ spec:
                     CLIENT_SECRET=$(echo ${LOOKUP_SECRET_RESPONSE} | jq -r '.data.data["clientSecret"]')
                   fi
 
-                  INTELI_API_ADDR="${INTELI_HOST}:${INTELI_PORT}"
-                  checkResponse=$(curl -s ${INTELI_API_ADDR}/health)
-
-                  if [ "$checkResponse" == "ok" ]; then
-                    echo "response ok - no token required"
-                    exit 0
-                  else
-                    echo "response not ok - token required"
+                  if [ "${TOKEN_ADDR}" != "" ]; then
+                    echo "token required"
                     # Check if the token file is present and valid
                     if [ -f "${MOUNT_PATH}/token.txt" ]; then
                         echo "token is present - Checking if token is valid"
