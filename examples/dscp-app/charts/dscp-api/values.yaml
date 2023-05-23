@@ -39,11 +39,11 @@ ingress:
 replicaCount: 1
 
 # image section provides the information about the image used
-# eg. repository: ghcr.io/digicatapult/dscp-api
+# eg. repository: ghcr.io/inteli-poc/dscp-api
 image:
-  repository: ghcr.io/digicatapult/dscp-api
+  repository: ghcr.io/inteli-poc/dscp-api
   pullPolicy: IfNotPresent
-  tag: 'v4.6.7'
+  tag: 'v4.6.8'
 
 dscpNode:
   enabled: false

@@ -40,9 +40,9 @@ service:
   port: 
 
 image:
-  repository: ghcr.io/digicatapult/inteli-api
+  repository: ghcr.io/inteli-poc/inteli-api
   pullPolicy: IfNotPresent
-  tag: 'v1.28.0'
+  tag: 'v1.32.0'
   pullSecrets: 
 
 postgresql:

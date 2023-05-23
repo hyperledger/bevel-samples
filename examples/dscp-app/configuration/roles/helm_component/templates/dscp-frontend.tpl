@@ -42,7 +42,7 @@ spec:
     image:
       repository: ghcr.io/inteli-poc/inteli-frontend  # {"$imagepolicy": "flux-{{ network.env.type }}:inteli-frontend:name"}
       pullPolicy: Always
-      tag: 'v1.3.1-a9b2b40-1673367333' # {"$imagepolicy": "flux-{{ network.env.type }}:inteli-frontend:tag"}
+      tag: 'latest' # {"$imagepolicy": "flux-{{ network.env.type }}:inteli-frontend:tag"}
     vault:
       alpineutils: ghcr.io/hyperledger/alpine-utils:1.0
       address: {{ component_vault.url }}
