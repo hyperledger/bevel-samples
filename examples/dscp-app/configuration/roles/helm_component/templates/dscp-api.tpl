@@ -45,9 +45,9 @@ spec:
         - /v3
     replicaCount: 1
     image:
-      repository: ghcr.io/digicatapult/dscp-api
+      repository: ghcr.io/inteli-poc/dscp-api
       pullPolicy: IfNotPresent
-      tag: 'v4.6.7'
+      tag: 'v4.6.8'
     dscpNode:
       enabled: false
 

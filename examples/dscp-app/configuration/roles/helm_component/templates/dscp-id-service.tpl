@@ -43,9 +43,9 @@ spec:
         - /v1/members
     replicaCount: 1
     image:
-      repository: ghcr.io/digicatapult/dscp-identity-service
+      repository: ghcr.io/inteli-poc/dscp-identity-service
       pullPolicy: IfNotPresent
-      tag: 'v1.6.0'
+      tag: 'v1.7.2'
       pullSecrets: 
 
     postgresql:

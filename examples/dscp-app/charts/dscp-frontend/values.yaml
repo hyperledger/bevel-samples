@@ -35,11 +35,11 @@ ingress:
 replicaCount: 1
 
 # image section provides the information about the image used
-# eg. repository: ghcr.io/digicatapult/inteli-frontend
+# eg. repository: ghcr.io/inteli-poc/inteli-frontend
 image:
   repository: ghcr.io/inteli-poc/inteli-frontend
   pullPolicy: IfNotPresent
-  tag: 'v0.0.65e2369'
+  tag: 'latest'
   # The kubernetes secret used to access the image
   pullSecrets: regcred
 
