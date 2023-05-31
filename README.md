@@ -38,7 +38,6 @@ The setup process has been automated using Ansible scripts, GitOps, and Helm cha
 
 The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
 1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it. Check samples in `examples/supplychain-app/configuration/samples`.
-1. You must update the `env.type` so that another Flux can be deployed.
 
 1. Update the following for each organization in the `gitops` section.
     - `git_url` and `git-repo` to your bevel-samples repo
@@ -87,7 +86,6 @@ The setup process has been automated using Ansible scripts, GitOps, and Helm cha
 The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
 1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it.
 
-1. You must update the `env.type` so that another Flux can be deployed.
 1. Update the following for each organization in the `gitops` section.
     - `git_url` and `git-repo` to your bevel-samples repo
     - `chart_source` to `examples/identity-app/charts`
@@ -126,7 +124,7 @@ The setup process has been automated using Ansible scripts, GitOps, and Helm cha
 
 The files have all been provided to use and require the user to populate the `network.yaml` file accordingly, following these steps:
 1. Create a copy of the `network.yaml` you have used to set up your network and add the application specific key-values to it. Check samples in `examples/dscp-app/configuration/samples`.
-1. You must update the `env.type` so that another Flux can be deployed.
+
 1. Update the following for each organization in the `gitops` section.
     - `git_url` and `git-repo` to your bevel-samples repo
     - `chart_source` to `examples/dscp-app/charts`
