@@ -79,5 +79,6 @@
       "quorum": "quo",
       "corda-enterprise": "ent",
       "corda": "ns",
-      "besu": "bes"
+      "besu": "bes",
+      "substrate": "subs"
     }]

@@ -13,7 +13,7 @@
     api_version: "v1"
     namespace: "flux-{{ network.env.type }}-app"
   with_items:
-    - ["Deployment", "Service", "NetworkPolicy","ServiceAccount", "Secret"]
+    - ["Deployment", "Service", "NetworkPolicy", "ServiceAccount", "Secret"]
 
 # Deletes Deployments related to flux
 - name: Delete all Flux sources
