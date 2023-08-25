@@ -27,7 +27,7 @@ spec:
       cert_path: "/secret/tls/user1.cert"
       key_path: "/secret/tls/user1.pem"
     storage:
-      storageclassname: {{ name }}sc
+      storageclassname: {{ sc_name }}
       storagesize: 512Mi
     vault:
       address: {{ component_vault.url }}

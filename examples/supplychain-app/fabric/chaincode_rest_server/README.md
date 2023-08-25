@@ -166,8 +166,9 @@ The input network.yaml should be updated correctly with the Chart path `examples
 To update running Fabric rest-servers, ensure you are logged in to the Azure Docker Registry. Then:
 
 ```bash
-docker build -t hyperledgerlabs/supplychain_fabric:rest_server_latest rest-server
-docker push hyperledgerlabs/supplychain_fabric:rest_server_latest
+# From this folder
+docker build -t ghcr.io/hyperledger/bevel-supplychain-fabric:rest-server-latest rest-server
+docker push ghcr.io/hyperledger/bevel-supplychain-fabric:rest-server-latest
 ```
 
 Once the push is complete, Flux-helmoperator should redeploy the restserver pods

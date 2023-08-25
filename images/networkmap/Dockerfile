@@ -1,4 +1,4 @@
-FROM hyperledgerlabs/blockchain-linuxkit:latest
+FROM ghcr.io/hyperledger/bevel-blockchain-linuxkit:latest
 LABEL VENDOR="Hyperledger" \
       MAINTAINER="Hyperledger"
 EXPOSE 8080

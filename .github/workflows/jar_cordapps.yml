@@ -5,7 +5,7 @@
 ##############################################################################################
 
 # Build corda os docker images triggered by :
-#  - push on develop branch for latest tags
+#  - push on main branch for latest tags
 #  - create tag vx.y.z for release tags
 #  - Can be triggered manually
 
@@ -18,14 +18,13 @@ on:
         default: '4.7'
   push:
     branches:
-      - develop
       - main
     paths:
       - '.github/workflows/jar_cordapps.yml'
       - 'examples/supplychain-app/corda/cordApps_springBoot/**'
 
 jobs:
-  # on push to develop branch, create docker tags latest
+  # on push to main branch, create docker tags latest
   publish:
     runs-on: ubuntu-latest
     permissions:

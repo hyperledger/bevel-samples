@@ -19,8 +19,8 @@ server:
   #Eg. localmspid: carrierMSP
   localmspid: 
   #Provide the image name for the server container: 
-  #Eg: hyperledgerlabs/supply_chain_fabric/rest-server:latest
-  image: 
+  #Eg: ghcr.io/hyperledger/bevel-supplychain-fabric:express-app-latest
+  image: ghcr.io/hyperledger/bevel-supplychain-fabric:express-app-latest
   #Provide the username of the user accessing the fabric network:user1
   username: 
   #Provide the path to the user's cert: 
@@ -56,7 +56,7 @@ vault:
   #Provide the imagesecretname for vault
   #Eg. imagesecretname: regcred
   imagesecretname: 
-  #Provide the image name for the init container: hyperledgerlabs/alpine-utils:1.0
+  #Provide the image name for the init container: ghcr.io/hyperledger/bevel-alpine:latest
   image:
 
 service:

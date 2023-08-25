@@ -17,6 +17,7 @@
     peer_restserver_port: "{{ peer_data.restserver.port }}"
     peer_restserver_targetport: "{{ peer_data.restserver.targetPort }}"
     peer_url: "{{ peer_data.gossippeeraddress }}"
+    sc_name: "{{ organization_data.name | lower }}-{{ organization_data.cloud_provider }}-storageclass"
     orderer_url: "{{ network | json_query('orderers[?type==`orderer`].uri') | first }}"
   loop: "{{ organization_data.services.peers }}"
   loop_control:

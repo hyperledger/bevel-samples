@@ -12,7 +12,7 @@ This folder contains Ansible playbooks and their corresponding roles which are u
 ## Prerequisites
 
 To run the playbooks, following are the pre-requisites.
-1. Ansible 2.8.2 with jmespath installed (You can use [hyperledgerlabs/baf-build](https://hub.docker.com/repository/docker/hyperledgerlabs/baf-build) image from Docker Hub).
+1. Ansible 2.8.2 with jmespath installed (You can use [ghcr.io/hyperledger/bevel-build:latest](https://github.com/orgs/hyperledger/packages?repo_name=bevel) image from GHCR).
 2. Ansible controller configured like this [sample](../../../platforms/shared/inventory) inventory settings.
 3. A running Hyperledger Indy network created by Hyperledger Bevel on a cluster or Minukube.
 4. A running Hashicorp Vault.

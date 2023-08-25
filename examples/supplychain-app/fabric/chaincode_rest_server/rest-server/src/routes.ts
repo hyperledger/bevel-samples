@@ -10,6 +10,7 @@ router.get('/:trackingID/scan', GeneralController.scan);
 router.get('/:trackingID/history', GeneralController.getHistory);
 router.get('/node-organization', GeneralController.getOrganization);
 router.get('/node-organizationUnit', GeneralController.getOrganizationUnit);
+router.get('/initialize', GeneralController.initialize);
 
 // Product Routes
 router.post('/product/', ProductController.createProduct);
