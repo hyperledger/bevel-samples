@@ -42,7 +42,7 @@ Prepare a network.yaml file for your demo by following this sample for [AWS](htt
 Run Ansible Playbook by following these [steps](https://github.com/hyperledger/bevel/tree/main/platforms/hyperledger-indy/configuration)
 Can be started also via Docker container:
 1. Go to root directory of this git repository.
-2. Run command: `docker run -it -v $(pwd):/home/bevel/ --entrypoint bash hyperledgerlabs/baf-build`
+2. Run command: `docker run -it -v $(pwd):/home/bevel/ --entrypoint bash ghcr.io/hyperledger/bevel-build:latest`
 3. When are you entered into Docker container console, use command:
 `./run.sh`
 ### Step 5

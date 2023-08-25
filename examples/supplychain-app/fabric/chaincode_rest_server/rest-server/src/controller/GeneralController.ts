@@ -67,4 +67,22 @@ export default class GeneralController {
 
     return ctx;
   }
+
+  // GET /initialize
+  // This is needed as Fabric 2.x chaincode lifecycle does not support invoke
+  static async initialize(ctx: Context) {
+    const client = new SupplyChainClient(ctx.user);
+    await client.connect();
+    const network = await client.getNetwork('allchannel');
+    const contract = await network.getContract('supplychain');
+
+    try {
+      const response = await contract.submitTransaction('init');
+      ctx.status = 200;
+      ctx.body = response;
+    } catch (e) {
+      ctx.status = 500;
+      ctx.body = { message: e.message };
+    }
+  }
 }

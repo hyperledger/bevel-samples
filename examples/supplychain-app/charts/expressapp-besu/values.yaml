@@ -50,7 +50,7 @@ vault:
     authpath:
 
 images:
-    alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+    alpineutils: ghcr.io/hyperledger/bevel-alpine:latest
 
 ###################################################################################
 #                                EXPRESS APP CONFIGURATION                        #

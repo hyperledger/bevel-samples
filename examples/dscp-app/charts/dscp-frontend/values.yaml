@@ -47,7 +47,7 @@ image:
 # NOTE: Make sure that the vault is already unsealed, intialized and configured to
 # use the Kubernetes service account token based authentication.
 vault:
-  # for eg. alpineutils: hyperledgerlabs/alpine-utils:1.0 #this image has curl installed
+  # for eg. alpineutils: ghcr.io/hyperledger/bevel-alpine:latest #this image has curl installed
   alpineutils:
   # address provide the vault address
   # Eg. address: http://vault.example.com:8200

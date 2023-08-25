@@ -1,6 +1,10 @@
 const axios = require ('axios')
 const {endpoint} = require('./config.js')
 
+let initialize = async () => {
+  let nodeInfo =  await axios.get(endpoint + '/initialize');
+  return nodeInfo.data;
+}
 
 let getSelf = async () => {
   let nodeInfo =  await axios.get(endpoint + '/node-organization');
@@ -92,4 +96,5 @@ module.exports = {
   receiveContainer,
   packageGood,
   unPackageGood,
+  initialize,
 }

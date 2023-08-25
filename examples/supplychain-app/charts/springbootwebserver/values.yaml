@@ -91,23 +91,12 @@ resources:
   requests: "512Mi"
 
 storage:
-  provisioner: 
   #Provide the memory for node
   #Eg. memory: 4Gi
   memory: 
   #Provide the name for node
   #Eg. name: bank1webnodesc
   name: 
-  parameters:
-    #Provide the type for node
-    #Eg. type: gp2
-    type: gp2
-    # Provide whether the EBS volume should be encrypted or not
-    #Eg. encrypted: "true"
-    encrypted: "true"
-  annotations: {}
-#   annotations:
-#     key: "value"
 
 web:
 # Note: Target ports are dependent on image being used. Please change them accordingly 

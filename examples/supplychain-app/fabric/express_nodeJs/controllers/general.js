@@ -1,6 +1,17 @@
 var express = require('express')
   , router = express.Router()
-const {getSelf, getRole , scan, locationHistory} = require('../api')
+const {getSelf, getRole , scan, locationHistory, initialize} = require('../api')
+
+router.get('/initialize', function (req, res) {
+  initialize()
+  .then( response => {
+    res.send(response)
+  })
+  .catch(error => {
+    console.log(error)
+    res.send("error")
+  })
+})
 
 router.get('/node-organization', function (req, res) {
   getSelf()

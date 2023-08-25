@@ -165,7 +165,26 @@
     loop: "{{ network['organizations'] }}"
     loop_control:
       loop_var: organization_data
-    when: network['type'] == 'fabric' and network['frontend'] == 'enabled' and component_type == 'peer' 
+    when: network['type'] == 'fabric' and network['frontend'] == 'enabled' and component_type == 'peer'
+
+  # # Call the initialize function to set the blockchain as invoke does not work for external chaincodes
+  # - name: Call initialize API
+  #   uri:
+  #     url: "https://{{ component_name }}.{{ component_url }}/api/v1/initialize"
+  #     method: GET
+  #     status_code: 200  # expected status code
+  #   vars:
+  #     component_name: "{{ organization_data.name | lower }}api"
+  #     component_url: "{{ organization_data.external_url_suffix }}"
+  #     component_type: "{{ organization_data.type | default(' ', true) | lower  }}"
+  #     external_chaincode: "{{ organization_data.services.peers[0].chaincodes[0].external_chaincode | default(false) }}"
+  #   loop: "{{ network['organizations'] }}"
+  #   loop_control:
+  #     loop_var: organization_data
+  #   when: 
+  #   - network['type'] == 'fabric'
+  #   - component_type == 'peer'
+  #   - external_chaincode
   
   ############################################################################################
   # Deploy the Smart contract on Quorum node
