@@ -45,13 +45,13 @@ jobs:
         java-version: '8'
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v2
 
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
+      uses: docker/setup-qemu-action@v2
 
     - name: Login to the container registry
-      uses: docker/login-action@v1
+      uses: docker/login-action@v2
       with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -59,7 +59,7 @@ jobs:
 
     - name: Lowercase IMAGE_PATH
       id: image_path_format
-      uses: ASzc/change-string-case-action@v2
+      uses: ASzc/change-string-case-action@v5
       with:
         string: ${{ env.IMAGE_PATH }}
 
@@ -85,7 +85,7 @@ jobs:
 
     - name: Build and push cordaOS doorman latest
       id: corda_doorman_latest
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v4
       with:
         context: images/doorman
         push: true
@@ -93,7 +93,7 @@ jobs:
 
     - name: Build and push cordaOS networkmap latest
       id: corda_networkmap_latest
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v4
       with:
         context: images/networkmap
         push: true
