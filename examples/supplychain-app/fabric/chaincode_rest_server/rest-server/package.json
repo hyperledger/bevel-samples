@@ -30,7 +30,7 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
-    "@koa/cors": "^2.2.1",
+    "@koa/cors": "^5.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "dotenv": "^6.0.0",    
