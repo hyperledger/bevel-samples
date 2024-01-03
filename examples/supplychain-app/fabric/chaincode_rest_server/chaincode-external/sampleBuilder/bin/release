@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -euo pipefail
-
 BLD="$1"
 RELEASE="$2"
 
