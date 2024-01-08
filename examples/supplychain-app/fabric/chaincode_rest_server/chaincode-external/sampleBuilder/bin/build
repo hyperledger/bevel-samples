@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -euo pipefail
-
 SOURCE=$1
 OUTPUT=$3
 
