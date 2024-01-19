@@ -1,4 +1,4 @@
-FROM node:11-slim
+FROM node:14-slim
 
 # Copy app
 COPY . /code

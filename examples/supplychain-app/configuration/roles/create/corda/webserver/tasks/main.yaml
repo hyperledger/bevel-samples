@@ -32,6 +32,7 @@
     image_tag: "{{ springboot_image_tag[network.version] }}"
     networkmap_name: na
     doorman_name: na
+    sc_name: "{{ organization_data.name | lower }}-{{organization_data.cloud_provider}}-storageclass"
   loop: "{{ organization_data.services.peers }}"
   loop_control:
     loop_var: node
@@ -50,6 +51,7 @@
     image_tag: "{{ springboot_image_tag[network.version] }}"
     networkmap_name: "{{ network | json_query('network_services[?type==`networkmap`].name') | first }}"
     doorman_name: "{{ network | json_query('network_services[?type==`idman`].name') | first }}"
+    sc_name: "{{ organization_data.name | lower }}-{{organization_data.cloud_provider}}-storageclass"
   loop: "{{ organization_data.services.peers }}"
   loop_control:
     loop_var: node

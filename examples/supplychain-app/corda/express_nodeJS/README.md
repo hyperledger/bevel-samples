@@ -20,8 +20,8 @@ sudo docker run -p 3000:3000 -e "API_URL=https://partyaapi.blockchaincloudpoc.co
 ## Publish to Docker repo
 To publish the docker image to a docker repo, run the following commands:
 ```bash
-sudo docker tag express_corda_app:latest hyperledgerlabs/supplychain_corda:express_app_latest
-	sudo docker push hyperledgerlabs/supplychain_corda:express_app_latest
+    sudo docker tag express_corda_app:latest ghcr.io/hyperledger/bevel-supplychain-corda:express-app-latest
+	sudo docker push ghcr.io/hyperledger/bevel-supplychain-corda:express-app-latest
 
 ```
 

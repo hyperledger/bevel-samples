@@ -173,7 +173,7 @@ see a single jar file, you can run multiple instances per application.properties
 2. The above command will create an image with tag *supplychain_corda:springboot_latest*. If you want to upload this image to a registry, update the tag accordingly and then push to docker. Sample command below:
 ```
 	sudo docker tag supplychain_corda:springboot_latest ghcr.io/hyperledger/bevel-supplychain-corda:springboot-latest
-	sudo docker push hyperledgerlabs/supplychain_corda:springboot_latest
+	sudo docker push ghcr.io/hyperledger/bevel-supplychain-corda:springboot-latest
 ```
 
 # Interacting with the network

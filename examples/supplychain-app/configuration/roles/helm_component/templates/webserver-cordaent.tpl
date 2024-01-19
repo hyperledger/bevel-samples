@@ -48,13 +48,8 @@ spec:
       limits: "512Mi"
       requests: "512Mi"
     storage:
-      provisioner: kubernetes.io/aws-ebs
       memory: 512Mi
-      name: {{organization_data.cloud_provider}}storageclass
-      parameters:
-        type: gp2
-        encrypted: "true"
-      annotations: {}
+      name: {{ sc_name }}
     web:
       targetPort: {{ node.springboot.targetPort|e }}
       port: {{ node.springboot.port|e }}

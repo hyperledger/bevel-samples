@@ -12,7 +12,7 @@ init:
   - linuxkit/runc:v0.7
   - linuxkit/containerd:v0.7
   - linuxkit/ca-certificates:v0.7
-  - hyperledgerlabs/linuxkit-java:latest
+  - ghcr.io/hyperledger/bevel-blockchain-linuxkit:latest
 onboot:
   - name: sysctl
     image: linuxkit/sysctl:v0.7

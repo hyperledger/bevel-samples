@@ -1,0 +1,4 @@
+*.tar.gz
+*.tgz
+crypto/*.pem
+vendor/*
