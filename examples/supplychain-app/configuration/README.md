@@ -133,7 +133,7 @@ network:
                 ambassador: 15023
               db:                       
                 port: 3306
-              geth_url: "http://manufacturer.test.corda.blockchaincloudpoc.com:15021" 
+              geth_url: "http://manufacturerrpc.test.corda.blockchaincloudpoc.com" 
               smart_contract:
                 name: "General"           
                 contract_path: "./contracts"  

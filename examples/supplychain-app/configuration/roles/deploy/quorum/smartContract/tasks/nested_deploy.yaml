@@ -33,7 +33,7 @@
 - name: Run deploy.js for "{{ organization_data.name | lower }}"
   shell: |
     cd "{{ playbook_dir }}/../../../{{ smart_contract.deployjs_path }}"
-    node ./deploy.js "{{ URL }}" "{{ contract_path }}" "{{ entrypoint }}" "{{ contract }}" {{ privateFor }}
+    node ./deploy.js "{{ URL }}" "{{ contract_path }}" "{{ entrypoint }}" "{{ contract }}" "{{ privateFor }}"
   vars:
     URL: "{{ peer.geth_url }}"
     contract_path: "{{ smart_contract.contract_path }}"

@@ -112,7 +112,6 @@ network:
           name: carrier
           subject: "O=Carrier,OU=Carrier,L=51.50/-0.13/London,C=GB" # This is the node subject. L=lat/long is mandatory for supplychain sample app
           type: validator         # value can be validator or member, only applicable if consensus = 'ibft'
-          consortium_role: admin
           geth_passphrase: 12345  # Passphrase to be used to generate geth account
           p2p:
             port: 21000
@@ -134,8 +133,8 @@ network:
           frontend:
             targetPort: 80
             port: 8080
-          # Geth url for the the node. Formed by http://(peer.name).(org.external_url_suffix):(ambassador rpc port)
-          geth_url: "http://carrier.test.corda.blockchaincloudpoc.com:15011" 
+          # Geth url for the the node. Formed by http://(peer.name)rpc.(org.external_url_suffix)
+          geth_url: "http://carrierrpc.test.corda.blockchaincloudpoc.com" 
           
 
     # Specification for the 2nd organization. Each organization maps to a VPC and a separate k8s cluster
@@ -204,7 +203,7 @@ network:
           frontend:
             targetPort: 80
             port: 8080
-          geth_url: "http://manufacturer.test.corda.blockchaincloudpoc.com:15021" 
+          geth_url: "http://manufacturerrpc.test.corda.blockchaincloudpoc.com" 
           # smartcontract to be deployed only from one node (should not be repeated in other nodes)
           smart_contract:
             name: "General"           # Name of the smart contract or Name of the main Smart contract Class
@@ -279,7 +278,7 @@ network:
           frontend:
             targetPort: 80
             port: 8080
-          geth_url: "http://store.test.corda.blockchaincloudpoc.com:15031" 
+          geth_url: "http://storerpc.test.corda.blockchaincloudpoc.com" 
 
     - organization:
       name: warehouse
@@ -346,4 +345,4 @@ network:
           frontend:
             targetPort: 80
             port: 8080
-          geth_url: "http://warehouse.test.corda.blockchaincloudpoc.com:15041" 
+          geth_url: "http://warehouserpc.test.corda.blockchaincloudpoc.com" 

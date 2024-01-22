@@ -103,7 +103,6 @@ network:
         - peer:
           name: carrier
           subject: "O=Carrier,OU=Carrier,L=51.50/-0.13/London,C=GB" # This is the node subject. L=lat/long is mandatory for supplychain sample app
-          consortium_role: admin
           geth_passphrase: 12345  # Passphrase to be used to generate geth account
           lock: true        # Sets Besu node to lock or unlock mode. Can be true or false
           p2p:
@@ -122,7 +121,7 @@ network:
           expressapi:
             port: 3000
             targetPort: 3000    
-          geth_url: "http://carrier.test.besu.blockchaincloudpoc.com:15021" # URL used for the RPC calls    
+          geth_url: "http://carrierrpc.test.besu.blockchaincloudpoc.com" # URL used for the RPC calls    
 
     # Specification for the 2nd organization. Each organization maps to a VPC and a separate k8s cluster
     - organization:
@@ -190,18 +189,22 @@ network:
           expressapi:
             port: 3000
             targetPort: 3000
-          geth_url: "http://manufacturer.test.besu.blockchaincloudpoc.com:15031" # URL used for the RPC calls
+          geth_url: "http://manufacturerrpc.test.besu.blockchaincloudpoc.com" # URL used for the RPC calls
           smart_contract:
             name: "General"           # Name of the smart contract or Name of the main Smart contract Class
             deployjs_path: "examples/supplychain-app/besu/smartContracts" # Relative location of folder containing all smartcontracts
             contract_path: "./contracts"       # Path of the smart contract folder under deployjs_path
             iterations: 20           # Number of Iteration of execution to which the gas and the code is optimised
-            entrypoint: "General.sol" # Main entrypoint solidity file of the contract 
-            private_for: "FxaY4uzuyaFoQrEdrC6glrIwmEUcQQFh+XEB7N1QcDo=,CXtt5UNdZkJyA2CYWBhjmTSmyhMqjWGq4CBMKijhYFQ=" # tm Public keys for the privateFor
+            entrypoint: "General.sol" # Main entrypoint solidity file of the contract
             public_tx: true # Set to true enable public transactions.
+            private_for: # List of peer names for private transactions, only if publix_tx=false
+              - "store"
+              - "carrier"
+              - "warehouse"
 
     - organization:
       name: store
+      unit: Store
       type: member        
       # Provide the url suffix that will be added in DNS recordset. Must be different for different clusters
       # This is not used for Besu as Besu does not support DNS hostnames currently. Here for future use
@@ -262,10 +265,11 @@ network:
           expressapi:
             port: 3000
             targetPort: 3000
-          geth_url: "http://store.test.besu.blockchaincloudpoc.com:15041" # URL used for the RPC calls
+          geth_url: "http://storerpc.test.besu.blockchaincloudpoc.com" # URL used for the RPC calls
 
     - organization:
       name: warehouse
+      unit: Warehouse
       type: member         
       # Provide the url suffix that will be added in DNS recordset. Must be different for different clusters
       # This is not used for Besu as Besu does not support DNS hostnames currently. Here for future use
@@ -326,4 +330,4 @@ network:
           expressapi:
             port: 3000
             targetPort: 3000
-          geth_url: "http://warehouse.test.besu.blockchaincloudpoc.com:15051" # URL used for the RPC calls
+          geth_url: "http://warehouserpc.test.besu.blockchaincloudpoc.com" # URL used for the RPC calls

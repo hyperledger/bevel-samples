@@ -4,7 +4,7 @@
 //  SPDX-License-Identifier: Apache-2.0                                                        //
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-var Web3 = require("web3");
+const { Web3 } = require("web3");
 var {productABI} = require("./ABI/productABI");
 var {productContractAddress,quorumServer, ganacheServer, nodeIdentity, nodeOrganization, nodeOrganizationUnit, nodeSubject,protocol} = require("./config");
 

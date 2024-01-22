@@ -14,7 +14,7 @@
     component_name: "{{ peer_data.name }}"
     kubernetes: "{{ organization_data.k8s }}"
     label_selectors:
-      - name = {{ component_name }}
+      - app = {{ component_name }}
   loop: "{{ organization_data.services.peers }}"
   loop_control:
     loop_var: peer_data
@@ -78,7 +78,7 @@
 # Replace accountid in postman env file
 - name: Replace accountid in postman env file
   replace:
-    path: "{{ playbook_dir }}/../tests/SupplychainDemo_besu.postman_environment.json"
+    path: "{{ playbook_dir }}/../../../build/SupplychainDemo_besu.postman_environment.json"
     regexp: "{{ organization_data.name | lower }}_account"
     replace: "{{ node_info.node_address }}"
   loop: "{{ node_address_list }}"

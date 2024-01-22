@@ -22,17 +22,17 @@ spec:
     replicaCount: 1
     vault:
       address: {{ organization_data.vault.url }}
-      secretprefix: {{ organization_data.vault.secret_path | default('secretsv2') }}/data/{{ component_ns }}/smartContracts
-      node_address_secret: {{ organization_data.vault.secret_path | default('secretsv2') }}/data/{{ component_ns }}/crypto/{{ name }}/data
+      secretprefix: {{ organization_data.vault.secret_path | default('secretsv2') }}/data/{{ network.env.type }}{{ organization_data.name | lower }}/smartContracts
+      node_address_secret: {{ organization_data.vault.secret_path | default('secretsv2') }}/data/{{ network.env.type }}{{ organization_data.name | lower }}/besu-node-{{ name }}-keys
       serviceaccountname: vault-auth
       contractName: {{ contract_name_value }}
       role: vault-role
-      authpath: besu{{ organization_data.name | lower }}
+      authpath: {{ network.env.type }}{{ organization_data.name | lower }}
     images:
       alpineutils: {{ network.docker.url }}/alpine-utils:1.0
     expressapp:
       serviceType: ClusterIP
-      image: ghcr.io/mgcepeda/{{ express_app_image }}
+      image: ghcr.io/hyperledger/bevel-supplychain-besu:latest
       pullPolicy: IfNotPresent
       pullSecrets: regcred
       nodePorts:

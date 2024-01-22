@@ -57,8 +57,8 @@ Ganache is a personal Ethereum network that allows you to test smart contracts d
 # Deploying Smart Contract on Quorum network using javaScript
 
 ## Requirments 
-- node<br>
-- npm<br>
+- node v16.17.0<br>
+- npm 8.15.0<br>
 
 
 1. In terminal, change directory to quorum/smartContracts and run command below to install the required packages listed in package.json .<br>
