@@ -55,12 +55,9 @@ jobs:
         npm install -g ganache-cli
         npm install -g truffle
         npm install -g truffle-export-abi
-    - name: Start local node
+    - name: Start local node and test smartcontracts
       run: |
         nohup ganache-cli --allowUnlimitedContractSize --gasLimit=68219752232 &
-        sleep 10
-    - name: Test quorum smartcontracts
-      run: |
-        pwd
+        sleep 2
         cd examples/supplychain-app/quorum/smartContracts
         truffle test --config ./truffle-config.js
