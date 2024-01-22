@@ -36,6 +36,7 @@
       dest: "{{ playbook_dir }}/../../../build/"
     with_fileglob:
       - "{{ playbook_dir }}/../tests/SupplychainDemo_*"
+
   ############################################################################################
   # Create restserver value file for the peer nodes
   - include_role:
@@ -204,7 +205,7 @@
     include_role:
       name: "setup/smartContractAddress"
     vars:
-      component_ns: "{{ organization_data.name | lower }}-quo"
+      component_name: "{{ organization_data.name | lower }}"
       component_vault: "{{ organization_data.vault }}"
     loop: "{{ network['organizations'] }}"
     loop_control:
@@ -261,7 +262,7 @@
     include_role:
       name: "setup/smartContractAddress"
     vars:
-      component_ns: "{{ organization_data.name | lower }}-bes"
+      component_name: "{{ organization_data.name | lower }}"
       component_vault: "{{ organization_data.vault }}"
     loop: "{{ network['organizations'] }}"
     loop_control:

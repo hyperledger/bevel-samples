@@ -42,10 +42,11 @@ router.get("/:trackingID?", function(req, res) {
           container.custodian = newContainer.custodian;
           container.custodian = container.custodian + "," + newContainer.lastScannedAt;
           container.trackingID = newContainer.trackingID;
+          let timestampAsNumber = Number(newContainer.timestamp);
           if(protocol==="raft")
-            container.timestamp  = (new Date(newContainer.timestamp/1000000)).getTime();
+            container.timestamp  = (new Date(timestampAsNumber/1000000)).getTime();
           else
-            container.timestamp  = (new Date(newContainer.timestamp*1000)).getTime();     
+            container.timestamp  = (new Date(timestampAsNumber*1000)).getTime();     
           container.containerID = newContainer.containerID;
           container.linearId = {};
           container.linearId.externalId = null;
@@ -90,10 +91,11 @@ router.get("/:trackingID?", function(req, res) {
           container.custodian = container.custodian + "," + toPush.lastScannedAt;
           container.lastScannedAt = toPush.lastScannedAt;
           container.trackingID = toPush.trackingID;
+          let timestampAsNumber = Number(toPush.timestamp);
           if(protocol==="raft")
-            container.timestamp  = (new Date(toPush.timestamp/1000000)).getTime();
+            container.timestamp  = (new Date(timestampAsNumber/1000000)).getTime();
           else
-            container.timestamp  = (new Date(toPush.timestamp*1000)).getTime(); 
+            container.timestamp  = (new Date(timestampAsNumber*1000)).getTime(); 
           container.containerID = toPush.containerID;
           container.linearId = {};
           container.linearId.externalId = null;
@@ -124,7 +126,9 @@ router.post("/", upload.array(), function(req, res) {
   };
   // Add this.address in the counterparties list
   newContainer.counterparties.push(fromAddress+","+fromNodeSubject);
-
+  web3.eth.getBalance(fromAddress).then(balance => {
+    console.log(`Account Balance: ${balance}`);
+  });
   
   var misc = [];
   var keys = Object.keys(newContainer.misc);

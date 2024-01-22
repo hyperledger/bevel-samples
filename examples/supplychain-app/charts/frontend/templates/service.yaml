@@ -9,31 +9,9 @@ apiVersion: v1
 metadata:
   name: {{ .Values.nodeName }}
   namespace: {{ .Values.metadata.namespace }}
-  {{- if eq $.Values.proxy.provider "ambassador" }}
-  annotations:
-    getambassador.io/config: | 
-      ---
-      apiVersion: ambassador/v2
-      kind: TLSContext
-      name: {{ .Values.proxy.peer_name }}_web_context
-      hosts:
-      - {{ .Values.proxy.peer_name }}web.{{ .Values.proxy.external_url_suffix }}
-      secret: {{ .Values.proxy.ambassador_secret }}.{{ .Values.metadata.namespace }}
-      secret_namespacing: true
-      min_tls_version: v1.2
-      ---
-      apiVersion: ambassador/v2
-      kind: Mapping
-      name: {{ .Values.proxy.peer_name }}_web_p2p_mapping
-      prefix: /
-      host: {{ .Values.proxy.peer_name }}web.{{ .Values.proxy.external_url_suffix }}
-      service: {{ .Values.proxy.peer_name }}-frontend.{{ .Values.metadata.namespace }}:{{ .Values.frontend.nodePorts.port }}
-      tls: false
-  {{ end }}
   labels:
     run: {{ .Values.nodeName }}
     app.kubernetes.io/name: {{ .Values.nodeName }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
@@ -44,7 +22,30 @@ spec:
   - port: {{ .Values.frontend.nodePorts.port }}
     targetPort: {{ .Values.frontend.nodePorts.targetPort }}
     protocol: TCP
-        
+{{- if eq $.Values.proxy.provider "ambassador" }}
+---
+apiVersion: getambassador.io/v3alpha1
+kind: TLSContext
+metadata:
+  name: {{ .Values.proxy.peer_name }}web-tlscontext
+  namespace: {{ .Values.metadata.namespace }}
+spec:
+  hosts:
+  - {{ .Values.proxy.peer_name }}web.{{ .Values.proxy.external_url_suffix }}
+  secret: {{ .Values.proxy.ambassador_secret }}.{{ .Values.metadata.namespace }}
+  secret_namespacing: true
+  min_tls_version: v1.2
+---
+apiVersion: getambassador.io/v3alpha1
+kind: Mapping
+metadata:
+  name: {{ .Values.proxy.peer_name }}web-mapping
+  namespace: {{ .Values.metadata.namespace }}
+spec:
+  prefix: /
+  host: {{ .Values.proxy.peer_name }}web.{{ .Values.proxy.external_url_suffix }}
+  service: {{ .Values.proxy.peer_name }}-frontend.{{ .Values.metadata.namespace }}:{{ .Values.frontend.nodePorts.port }}
+{{ end }}   
 {{- if eq $.Values.proxy.provider "haproxy" }}
 ---
 apiVersion: networking.k8s.io/v1

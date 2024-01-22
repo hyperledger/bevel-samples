@@ -7,7 +7,7 @@
 # Fetch node addresses from vault
 - name: Getting node addresses from vault
   shell: |
-    vault kv get -field=nodeAddress {{ component_vault.secret_path | default('secretsv2') }}/{{ component_ns }}/crypto/{{ peer.name }}/data
+    vault kv get -field=accountAddress {{ component_vault.secret_path | default('secretsv2') }}/{{ network.env.type }}{{ organization_data.name }}/besu-node-{{ peer.name }}-keys
   environment:
     VAULT_ADDR: "{{ component_vault.url }}"
     VAULT_TOKEN: "{{ component_vault.root_token }}"

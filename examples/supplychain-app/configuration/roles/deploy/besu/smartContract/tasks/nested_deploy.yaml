@@ -14,7 +14,7 @@
     component_name: "{{ peer.name }}"
     kubernetes: "{{ organization_data.k8s }}"
     label_selectors:
-      - name = {{ component_name }}
+      - app = {{ component_name }}
 
 # install the required packages listed in package.json
 - name: Installing the required packages listed in package.json
@@ -36,7 +36,7 @@
 # This task gets the node private key from the vault
 - name: get nodekey from vault
   shell: |
-    vault kv get -field=key {{ component_vault.secret_path | default('secretsv2') }}/{{ component_ns }}/crypto/{{ peer.name }}/data
+    vault kv get -field=accountPrivateKey {{ component_vault.secret_path | default('secretsv2') }}/{{ network.env.type }}{{ organization_data.name }}/besu-node-{{ peer.name }}-keys
   environment:
     VAULT_ADDR: "{{ component_vault.url }}"
     VAULT_TOKEN: "{{ component_vault.root_token }}"
@@ -45,7 +45,7 @@
 # This task gets the node address from the vault
 - name: get nodeAddress from vault
   shell: |
-    vault kv get -field=nodeAddress {{ component_vault.secret_path | default('secretsv2') }}/{{ component_ns }}/crypto/{{ peer.name }}/data
+    vault kv get -field=accountAddress {{ component_vault.secret_path | default('secretsv2') }}/{{ network.env.type }}{{ organization_data.name }}/besu-node-{{ peer.name }}-keys
   environment:
     VAULT_ADDR: "{{ component_vault.url }}"
     VAULT_TOKEN: "{{ component_vault.root_token }}"
@@ -54,42 +54,38 @@
 # This task gets the transaction manager public key from the vault
 - name: get tm_key from vault
   shell: |
-    vault kv get -field=publicKey {{ component_vault.secret_path | default('secretsv2') }}/{{ component_ns }}/crypto/{{ peer.name }}/tm
+    vault kv get -field=publicKey {{ component_vault.secret_path | default('secretsv2') }}/{{ network.env.type }}{{ organization_data.name }}/tessera-{{ peer.name }}-keys
   environment:
     VAULT_ADDR: "{{ component_vault.url }}"
     VAULT_TOKEN: "{{ component_vault.root_token }}"
   register: tm_key
+  when:
+  - smart_contract.public_tx is not defined or smart_contract.public_tx == false
 
-- name: get tm_key from vault for other nodes
-  shell: |
-    vault kv get -field=publicKey {{ component_vault.secret_path | default('secretsv2') }}/{{item[1].org}}-bes/crypto/{{item[1].node}}/tm
-  environment:
-    VAULT_ADDR: "{{ component_vault.url }}"
-    VAULT_TOKEN: "{{ component_vault.root_token }}"
-  register: other_tm_list
-  with_indexed_items: "{{ node_list }}"
-  when: 
-  - smart_contract.private_for == ''
-  - item[1].org != organization_data.name
+- name: Get partyinfo from tessera url
+  uri:
+    url: "https://{{ peer.name }}.{{ organization_data.external_url_suffix }}/partyinfo"
+    method: GET
+    validate_certs: no
+    status_code: 200
+  register: response
+  when:
+  - smart_contract.public_tx is not defined or smart_contract.public_tx == false
+  - smart_contract.private_for | length > 0
 
-- name: Set node_list to empty
+- name: Set local_private_for to empty
   set_fact:
     local_private_for: ''
 
-- name: Get node data
+- name: Extract tm_key based on filter
   set_fact:
-    local_private_for={{ local_private_for |default('') ~ other_tm.stdout ~ ',' }}    
-  loop: "{{ other_tm_list.results }}"
-  loop_control:
-    loop_var: other_tm 
-  when: 
-  - smart_contract.private_for == ''
-  - other_tm.changed 
-
-- name: Set fact
-  set_fact:
-    local_private_for=smart_contract.private_for
-  when: smart_contract.private_for != ''
+    local_private_for: |-
+      {% for i in smart_contract.private_for %}
+      {{ response.json | json_query('keys[?contains(url, `' + i + '`)].key') | first }}{%if not loop.last %},{% endif %}
+      {% endfor %}
+  when:
+  - smart_contract.public_tx is not defined or smart_contract.public_tx == false
+  - smart_contract.private_for | length > 0
 
 # Looping on the peers and finding out the peer with a chaincode section
 - name: "Deploying contract"

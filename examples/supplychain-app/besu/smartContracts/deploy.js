@@ -72,7 +72,7 @@ const deploySmartContract = async (contractOptions) => {
 const PostDeployKeeping = (abi, bytecode) => {
   try {
     if (!fs.existsSync(outputFolder)) {
-      fs.mkdirSync(outputFolder, 0744); // try to create a build folder if not exists
+      fs.mkdirSync(outputFolder, 0o744); // try to create a build folder if not exists
       args['v'] && console.log(`build folder is created`);
     }
   } catch (e) {

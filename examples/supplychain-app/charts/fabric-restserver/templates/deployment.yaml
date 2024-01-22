@@ -12,7 +12,6 @@ metadata:
   labels:
     name: {{ $.Values.server.name }}
     app.kubernetes.io/name: {{ $.Values.server.name }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:

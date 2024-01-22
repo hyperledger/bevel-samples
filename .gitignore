@@ -37,3 +37,4 @@
 **/.vscode/
 # custom config templates
 *_custom.tpl
+.env*
