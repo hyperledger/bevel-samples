@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:16-alpine
 
 #copy app
 COPY . ./app
@@ -6,7 +6,7 @@ COPY . ./app
 #Set working directory and copy package files over for
 WORKDIR /app
 
-RUN apk update || : && apk add python make build-base
+RUN apk update || : && apk add python3 make build-base
 
 #install dependencies
 RUN npm install

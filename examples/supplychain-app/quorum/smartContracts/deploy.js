@@ -11,7 +11,7 @@ const unlockPassPhrase = process.env.PASSPHRASE | " "; // Passphrase to unlock t
 const timeTillUnlocked = process.env.TIMETILLUNLOCKED | 600;
 const numberOfIterations = parseInt(process.env.ITERATIONS) | 200; // Number of Iterations of execution of code for calculation of gas
 
-const web3 = new Web3(`${url}`); // Creating a provider
+const web3 = new Web3(new Web3.providers.HttpProvider(`${url}`)); // Creating a provider
 
 var transactionHash = "";  // to store transaction hash to get the transaction recipt 
 
@@ -22,15 +22,14 @@ const deploy = async ()=>{
     console.log("Trying to deploy contract using account: ", accounts[0])
     const bytecode = `0x${smartContract.bytecode}`; // adding 0x prefix to the bytecode
     const gasEstimate = parseInt(smartContract.gasEstimates.creation.executionCost*numberOfIterations)+parseInt(smartContract.gasEstimates.creation.codeDepositCost); // Gas Estimation
-    const payload = initArguments !== " " || initArguments !== Number(0) ?{data: bytecode, arguments : initArguments} : {data: bytecode}; // If Initial Argumants are set in ENV variable
+    const payload = initArguments !== " " || initArguments !== Number(0) ?{data: bytecode, arguments: initArguments} : {data: bytecode}; // If Initial Argumants are set in ENV variable
 
     //TODO account unlocking
     // web3.eth.personal.unlockAccount(accounts[0], unlockPassPhrase , parseInt(timeTillUnlocked)) 
     // .then(console.log('Account unlocked!'));
-
-    let myContract = await new web3.eth.Contract(smartContract.abi); // defigning the contract using interface
+    let myContract = new web3.eth.Contract(smartContract.abi); // defigning the contract using interface
     let parameter = {
-        type: "quorum", // type of the network
+        //type: "quorum", // type of the network
         from: accounts[0], // Account used to deploy the smartContract
         gasPrice: 0, // price of a unit of gas in ether
         gas: gasEstimate // available gas unit to be spent
@@ -44,35 +43,26 @@ const deploy = async ()=>{
     PostDeployKeeping(smartContract.abi, smartContract.bytecode) // For writing the ABI and the smartContract bytecode in build 
 }
 
-const DeployContract = (payload, parameter, myContract) =>{
-    myContract.deploy(payload).send(parameter, (err, hash) => { //deploying the contract
-        if(err){
-            console.log("Error")  // consoling the Error for ansible purposes
-            console.log('Error :', err); // logging the error on the screen
-        }
-        transactionHash = hash; // storing transaction hash to get the transaction recipt
-    })
-    .then((newContractInstance) => {
-        let address = newContractInstance.options.address;
-        console.log("contract is stored at the address:",address); // consoling the contract address on the screen
-        console.log("contract Name: ", contractName); // returning the contract address
-        process.env.CONTRACT_ADDRESS = address; // exporting the contract address to an Environment variable
-        web3.eth.getTransactionReceipt(transactionHash).then((transaction)=>{
-            console.log("Transaction Receipt for the transaction hash ",transactionHash," : ",transaction); // logging the transaction recipt
-        });
-        return(address);
-    })
-    .catch((data)=>{console.log("promise got rejected",data)}); // catching the error in the promise
+const DeployContract = async (payload, parameter, myContract) =>{
+    const contractDeployer = myContract.deploy(payload);
+    try {
+		const tx = await contractDeployer.send(parameter);
+        let address = tx.options.address;
+        console.log("contract is stored at the address:",address);
+        console.log("contract Name: ", contractName);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 const PostDeployKeeping = (abi, bytecode) =>{
     try {
-        fs.writeFileSync("./build/abi.json", JSON.stringify(abi)) // writing the ABI file
+        fs.writeFileSync("./build/abi.json", JSON.stringify(abi, null, '\t')) // writing the ABI file
       } catch (err) {
         console.error(err)
       }
       try {
-        fs.writeFileSync("./build/bin.json", JSON.stringify(bytecode)) // writing binary code to the file
+        fs.writeFileSync("./build/General.bin", bytecode) // writing binary code to the file
       } catch (err) {
         console.error(err)
       }

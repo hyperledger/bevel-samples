@@ -11,7 +11,7 @@
     name: "../../../platforms/shared/configuration/roles/check/helm_component"
   vars:
     component_type: "Pod"
-    namespace: "{{ organization_data.name | lower }}-quo"
+    namespace: "{{ component_ns }}"
     component_name: "{{ peer.name }}"
     kubernetes: "{{ organization_data.k8s }}"
     label_selectors:
@@ -22,11 +22,42 @@
   npm:
     path: "{{ playbook_dir }}/../../../{{ smart_contract.deployjs_path }}"
 
+# delete build directory directory
+- name: delete build directory 
+  file:
+    path: "{{ playbook_dir }}/../../../{{ smart_contract.deployjs_path }}/build"
+    state: absent
+
 # create build directory directory
 - name: create build directory 
   file:
     path: "{{ playbook_dir }}/../../../{{ smart_contract.deployjs_path }}/build"
     state: directory
+
+- name: Get partyinfo from tessera url
+  uri:
+    url: "https://{{ peer.name }}.{{ organization_data.external_url_suffix }}/partyinfo"
+    method: GET
+    validate_certs: no
+    status_code: 200
+  register: response
+  when:
+  - smart_contract.public_tx is not defined or smart_contract.public_tx == false
+  - smart_contract.private_for | length > 0
+
+- name: Set local_private_for to empty
+  set_fact:
+    local_private_for: ''
+
+- name: Extract tm_key based on filter
+  set_fact:
+    local_private_for: |-
+      {% for i in smart_contract.private_for %}
+      {{ response.json | json_query('keys[?contains(url, `' + i + '`)].key') | first }}{%if not loop.last %},{% endif %}
+      {% endfor %}
+  when:
+  - smart_contract.public_tx is not defined or smart_contract.public_tx == false
+  - smart_contract.private_for | length > 0
 
 ############################################################################################
 # Run deploy.js to to install smart contract
@@ -39,7 +70,7 @@
     contract_path: "{{ smart_contract.contract_path }}"
     entrypoint: "{{ smart_contract.entrypoint}}"
     contract: "{{ smart_contract.name}}"
-    privateFor: "{{ smart_contract.private_for | default('0', true) }}"
+    privateFor: "{{ local_private_for }}"
   environment:
     ITERATIONS: "{{ smart_contract.iterations }}"
   register: address
@@ -67,4 +98,3 @@
   file:
     path: "{{ playbook_dir }}/../../../{{ smart_contract.deployjs_path }}/node_modules"
     state: absent
-

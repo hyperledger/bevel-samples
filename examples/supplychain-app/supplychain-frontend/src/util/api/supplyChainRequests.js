@@ -1,5 +1,4 @@
 import axios from 'axios';
-require('dotenv').config()
 
 const ENDPOINT = process.env.REACT_APP_API_ENDPOINT + '/api/v1';
 const source = axios.CancelToken.source();

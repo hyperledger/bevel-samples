@@ -25,8 +25,8 @@ spec:
       nodePorts:
         port: {{ peer_frontend_port }}
         targetPort: {{ peer_frontend_targetport }}
-      image: {{ network.docker.url }}/bevel-supplychain-frontend:latest
-      pullPolicy: Always
+      image: {{ network.docker.url }}/bevel-supplychain-frontend:1.0.0
+      pullPolicy: IfNotPresent
       pullSecrets: regcred
       env:
         webserver: https://{{ peer_name }}api.{{ organization_data.external_url_suffix }}

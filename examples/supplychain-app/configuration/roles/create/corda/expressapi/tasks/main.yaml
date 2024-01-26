@@ -25,7 +25,7 @@
   include_role:
     name: helm_component
   vars:
-    type: "expressapi"
+    type: "expressapi-corda"
     name: "{{ node.name }}"
     charts_dir: "{{ organization_data.gitops.chart_source }}"
     expressapi_image: "bevel-supplychain-corda:{{ express_image_tag[network.version] }}"
