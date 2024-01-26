@@ -3,8 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import parseName from '../util/parseName';
-require('dotenv').config()
-
 
 const styles = theme => ({
   map: {

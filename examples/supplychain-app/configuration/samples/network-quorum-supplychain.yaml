@@ -11,7 +11,7 @@ network:
   # Network level configuration specifies the attributes required for each organization
   # to join an existing network.
   type: quorum
-  version: 21.4.2  #this is the version of Quorum docker image that will be deployed. older version 2.1.1 is not compatible with supplychain contracts
+  version: 23.4.0  #this is the version of Quorum docker image that will be deployed. older version 2.1.1 is not compatible with supplychain contracts
 
   frontend: enabled #Flag for frontend to enabled for nodes/peers
 
@@ -39,7 +39,7 @@ network:
   
   # Following are the configurations for the common Quorum network
   config:    
-    consensus: "raft"                 # Options are "raft" and "ibft"
+    consensus: "ibft"                 # Options are "raft" and "ibft"
     ## Certificate subject for the root CA of the network. 
     #  This is for development usage only where we create self-signed certificates and the truststores are generated automatically.
     #  Production systems should generate proper certificates and configure truststores accordingly.
@@ -48,7 +48,7 @@ network:
     # This is the version of "tessera" or "constellation" docker image that will be deployed
     # Supported versions #
     # constellation: 0.3.2 (For all versions of quorum)
-    tm_version: "21.7.3"               
+    tm_version: "23.4.0"               
     tm_tls: "strict"                  # Options are "strict" and "off"
     tm_trust: "tofu"                  # Options are: "ca-or-tofu", "ca", "tofu"
     ## Transaction Manager nodes public addresses should be provided.
@@ -111,7 +111,7 @@ network:
         - peer:
           name: carrier
           subject: "O=Carrier,OU=Carrier,L=51.50/-0.13/London,C=GB" # This is the node subject. L=lat/long is mandatory for supplychain sample app
-          type: validator         # value can be validator or member, only applicable if consensus = 'ibft'
+          type: member         # value can be validator or member, only applicable if consensus = 'ibft'
           geth_passphrase: 12345  # Passphrase to be used to generate geth account
           p2p:
             port: 21000
@@ -181,7 +181,7 @@ network:
         - peer:
           name: manufacturer
           subject: "O=Manufacturer,OU=Manufacturer,L=47.38/8.54/Zurich,C=CH"  # This is the node identity. L=lat/long is mandatory for supplychain sample app
-          type: validator         # value can be validator or member, only applicable if consensus = 'ibft'
+          type: member         # value can be validator or member, only applicable if consensus = 'ibft'
           geth_passphrase: 12345  # Passphrase to be used to generate geth account
           p2p:
             port: 21000
@@ -211,7 +211,11 @@ network:
             contract_path: "./contracts"       # Path of the smart contract folder under deployjs_path
             iterations: 200           # Number of Iteration of execution to which the gas and the code is optimised
             entrypoint: "General.sol" # Main entrypoint solidity file of the contract 
-            private_for: "FxaY4uzuyaFoQrEdrC6glrIwmEUcQQFh+XEB7N1QcDo=,CXtt5UNdZkJyA2CYWBhjmTSmyhMqjWGq4CBMKijhYFQ=" # Sample Public keys for the privateFor, leave empty if not needed
+            public_tx: true # Set to true enable public transactions.
+            private_for: # List of peer names for private transactions, only if public_tx=false
+              - "store"
+              - "carrier"
+              - "warehouse"
 
     - organization:
       name: store
@@ -256,7 +260,7 @@ network:
         - peer:
           name: store
           subject: "O=Store,OU=Store,L=40.73/-74/New York,C=US" # This is the node identity. L=lat/long is mandatory for supplychain sample app
-          type: validator         # value can be validator or member, only applicable if consensus = 'ibft'
+          type: member         # value can be validator or member, only applicable if consensus = 'ibft'
           geth_passphrase: 12345  # Passphrase to be used to generate geth account
           p2p:
             port: 21000
@@ -323,7 +327,7 @@ network:
         - peer:
           name: warehouse
           subject: "O=Warehouse,OU=Warehouse,L=42.36/-71.06/Boston,C=US"  # This is the node identity. L=lat/long is mandatory for supplychain sample app
-          type: validator         # value can be validator or member, only applicable if consensus = 'ibft'
+          type: member         # value can be validator or member, only applicable if consensus = 'ibft'
           geth_passphrase: 12345  # Passphrase to be used to generate geth account
           p2p:
             port: 21000

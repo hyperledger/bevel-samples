@@ -6,7 +6,7 @@
 
 helm_templates:
   restserver: restserver.tpl
-  expressapi: expressapi.tpl
+  expressapi-corda: expressapi-corda.tpl
   expressapi-fabric: expressapi-fabric.tpl
   webserver: webserver.tpl
   webserver-ent: webserver-cordaent.tpl

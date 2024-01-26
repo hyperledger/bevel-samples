@@ -1,4 +1,4 @@
-var Web3 = require("web3");
+var { Web3 } = require("web3");
 var {productABI} = require("./ABI/productABI");
 var {productContractAddress,quorumServer, ganacheServer, nodeIdentity, nodeOrganization, nodeOrganizationUnit, nodeSubject,protocol} = require("./config");
 

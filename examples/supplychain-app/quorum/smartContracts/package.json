@@ -1,20 +1,24 @@
 {
   "name": "smartcontracts",
   "version": "1.0.0",
-  "description": "Ganache CLI<br>\r Truffle<br>",
+  "description": "Hardhat project with compile and deploy scripts",
   "main": "compile.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx hardhat test"
   },
-  "author": "",
+  "author": "Accenture",
   "license": "ISC",
   "dependencies": {
     "fs": "0.0.1-security",
     "path": "^0.12.7",
     "solc": "^0.6.6",
-    "web3": "^1.8.0"
+    "web3": "^1.10.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.4"
   }
 }

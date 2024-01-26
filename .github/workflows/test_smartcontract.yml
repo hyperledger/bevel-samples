@@ -49,15 +49,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update && sudo apt-get install npm
-
-        npm version
-
-        npm install -g ganache-cli
-        npm install -g truffle
-        npm install -g truffle-export-abi
-    - name: Start local node and test smartcontracts
+    - name: Test smartcontracts using hardhat
       run: |
-        nohup ganache-cli --allowUnlimitedContractSize --gasLimit=68219752232 &
-        sleep 2
         cd examples/supplychain-app/quorum/smartContracts
-        truffle test --config ./truffle-config.js
+        npm install
+        npm test

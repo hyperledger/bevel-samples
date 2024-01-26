@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import Marker from '../components/Marker'
 import { withStyles } from '@material-ui/core/styles';
 import parseName from '../util/parseName';
-require('dotenv').config()
-
 
 const styles = theme => ({
   map: {
