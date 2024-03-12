@@ -22,7 +22,7 @@ Replace the Google Maps API key in the following files
 
 1. To build the project, run the following command:
 ```	
-      mvn clean install -DskipTests
+    mvn clean install -DskipTests
 ```
 2. To execute the networkmap locally:
 ---
@@ -30,8 +30,8 @@ Replace the Google Maps API key in the following files
 
 ---
 ```
-      cd target
-	  java -jar network-map-service.jar
+	cd target
+	java -jar network-map-service.jar
 ```
 Example: To run using env variables
 ```
