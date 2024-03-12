@@ -16,7 +16,7 @@
     <kotlin.version>1.6.0</kotlin.version>
     <junit.version>4.13.1</junit.version>
     <!-- DO NOT CHANGE the vertx version to > 3.7.1 -->
-    <vertx.version>3.9.4</vertx.version>
+    <vertx.version>3.7.1</vertx.version>
     <corda.version>3.4-corda</corda.version>
     <dockerfile-maven.version>1.4.0</dockerfile-maven.version>
     <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
@@ -27,7 +27,7 @@
     <braid.version>3.3.1</braid.version>
     <argLine>-javaagent:lib/quasar.jar</argLine>
     <npm.skip>false</npm.skip>
-    <logback.version>1.2.9</logback.version>
+    <logback.version>1.2.13</logback.version>
     <flapdoodle.version>2.1.1</flapdoodle.version>
   </properties>
 
@@ -51,11 +51,11 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-      <url>https://ci-artifactory.corda.r3cev.com/artifactory/corda-dependencies</url>
+      <url>https://download.corda.net/maven/corda-dependencies</url>
     </repository>
     <repository>
       <id>3_r3</id>
-      <url>https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases</url>
+      <url>https://download.corda.net/maven/corda-releases</url>
     </repository>
     <repository>
       <id>4_jitpack</id>

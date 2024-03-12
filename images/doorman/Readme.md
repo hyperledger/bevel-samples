@@ -17,7 +17,7 @@ lib, pom.xml, source, static files. It also contains the Dockerfile for building
 
 1. To build the project, run the following command from this folder:
 ```	
-      mvn clean install -DskipTests
+    mvn clean install -DskipTests
 ```
 2. To execute the Doorman locally:
 ---
@@ -25,8 +25,8 @@ lib, pom.xml, source, static files. It also contains the Dockerfile for building
 
 ---
 ```
-      cd target
-	  java -jar doorman.jar
+	cd target
+	java -jar doorman.jar
 ```
 Example: To run using env variables
 ```	
