@@ -29,6 +29,7 @@ See https://docs.corda.net/getting-set-up.html.
 
 Notably:
  - Set JAVA_HOME to use JDK-8
+ `export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64`
 
 # Executing Tests
 

@@ -7,17 +7,17 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.nodeName }}
-  namespace: {{ .Values.metadata.namespace }}
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    run: {{ .Values.nodeName }}
-    app.kubernetes.io/name: {{ .Values.nodeName }}
+    run: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
-  type: {{ .Values.frontend.serviceType }}
+  type: ClusterIP
   selector:
-    app: {{ .Values.nodeName }}
+    app: {{ .Release.Name }}
   ports:
   - port: {{ .Values.frontend.nodePorts.port }}
     targetPort: {{ .Values.frontend.nodePorts.targetPort }}
@@ -28,11 +28,11 @@ apiVersion: getambassador.io/v3alpha1
 kind: TLSContext
 metadata:
   name: {{ .Values.proxy.peer_name }}web-tlscontext
-  namespace: {{ .Values.metadata.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   hosts:
   - {{ .Values.proxy.peer_name }}web.{{ .Values.proxy.external_url_suffix }}
-  secret: {{ .Values.proxy.ambassador_secret }}.{{ .Values.metadata.namespace }}
+  secret: {{ .Values.proxy.peer_name }}-tls-certs.{{ .Release.Namespace }}
   secret_namespacing: true
   min_tls_version: v1.2
 ---
@@ -40,26 +40,26 @@ apiVersion: getambassador.io/v3alpha1
 kind: Mapping
 metadata:
   name: {{ .Values.proxy.peer_name }}web-mapping
-  namespace: {{ .Values.metadata.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   prefix: /
   host: {{ .Values.proxy.peer_name }}web.{{ .Values.proxy.external_url_suffix }}
-  service: {{ .Values.proxy.peer_name }}-frontend.{{ .Values.metadata.namespace }}:{{ .Values.frontend.nodePorts.port }}
+  service: {{ .Values.proxy.peer_name }}-frontend.{{ .Release.Namespace }}:{{ .Values.frontend.nodePorts.port }}
 {{ end }}   
 {{- if eq $.Values.proxy.provider "haproxy" }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.nodeName }}
-  namespace:  {{ $.Values.metadata.namespace }}
+  name: {{ .Release.Name }}
+  namespace:  {{ .Release.Namespace }}
   annotations:
     kubernetes.io/ingress.class: "haproxy"
 spec:
   tls:
   - hosts:
     - {{ .Values.proxy.peer_name }}web.{{ .Values.proxy.external_url_suffix }}
-    secretName: {{ .Values.proxy.ambassador_secret }}
+    secretName: {{ .Values.proxy.peer_name }}-tls-certs
   rules:
   - host: {{ .Values.proxy.peer_name }}web.{{ .Values.proxy.external_url_suffix }}
     http:

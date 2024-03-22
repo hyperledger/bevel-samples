@@ -16,65 +16,31 @@ spec:
         name: flux-{{ network.env.type }}-app
         namespace: flux-{{ network.env.type }}-app
   values:
-    nodeName: {{ name }}-springboot
-    replicas: 1
-    metadata:
-      namespace: {{ component_ns }}
-      type: {{ platform_type }}
     image:
-      containerName: {{ network.docker.url }}/bevel-supplychain-corda:{{ image_tag }}
-      initContainerName: {{ network.docker.url }}/alpine-utils:1.0
+      webserver: {{ network.docker.url }}/bevel-supplychain-corda:springboot-latest
+      initContainer: {{ network.docker.url }}/bevel-alpine:latest
       imagePullSecret: regcred
-      privateCertificate: true
     smartContract:
       JAVA_OPTIONS : -Xmx512m
-    volume:
-      mountPath: /opt/corda
     nodeConf:
       node: {{ node.name|e }}
       nodeRpcPort: {{ node.rpc.port|e }}
-      nodeRpcAdminPort: {{ node.rpcadmin.port|e }}
-      controllerName: Controller
-      trustStorePath: /opt/corda/certificates/sslkeystore.jks
-      trustStoreProvider: jks
       legalName: {{ node.subject|e }}
       devMode: false
-      useHTTPS: true
       useSSL: false
-      tlsAlias: cordaclienttls
-      ssl:
-        certificatesDirectory: na-ssl-false
-        sslKeystoreFileName: na-ssl-false
-        ssltruststore: na-ssl-false
+      readinessCheckInterval: 10
+      readinessThreshold: 15
     credentials:
-      rpcUser: {{ node.name|e }}operations
+      rpcUser: nodeoperations
+      rpcUserPassword: nodeoperationsAdmin
+      keystorePassword: newpass
+      truststorePassword: newtrustpass
     resources:
       limits: "512Mi"
       requests: "512Mi"
     storage:
       memory: 512Mi
-      name: {{ sc_name }}
+      name: storage-{{ name }}
     web:
       targetPort: {{ node.springboot.targetPort|e }}
       port: {{ node.springboot.port|e }}
-    service:
-      type: NodePort
-      annotations: {}
-    networkservices:
-      networkmap: {{ networkmap_name }}
-      doorman: {{ doorman_name }}
-    vault:
-      address: "{{ component_vault.url }}"
-      role: vault-role
-      authpath: corda{{ node.name|e }}
-      serviceaccountname: vault-auth
-      rpcusersecretprefix: {{ node.name|e }}/data/credentials/rpcusers
-      keystoresecretprefix: {{ node.name|e }}/data/credentials/keystore
-      certsecretprefix: {{ node.name|e }}/data/certs
-    node:
-      readinesscheckinterval: 10
-      readinessthreshold: 15
-    deployment:
-      annotations: {}
-    pvc:
-      annotations: {}

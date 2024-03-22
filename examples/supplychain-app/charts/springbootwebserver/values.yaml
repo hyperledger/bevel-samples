@@ -3,34 +3,22 @@
 #
 #  SPDX-License-Identifier: Apache-2.0
 ##############################################################################################
-
-#Provide the nodeName for node
-#Eg. nodeName: bank1web
-nodeName: 
-
-#Provide the replica set for node deployed
-#Eg. replicas: 1
-replicas: 
-
 metadata:
-  #Provide the namespace
-  #Eg. namespace: default
-  namespace: 
-  #type of dlt platform, cordaopensource or cordaenterprise
-  #Eg. type: cordaopensource
-  type: 
+  deployment:
+    #   annotations:
+    #     key: "value"
+    annotations: {}
 
 image:
-  #Provide the containerName of image for main container
-  #Eg. containerName: adopfrablockchain.azurecr.io/springboot-webserver:1.0
-  containerName: 
+  #Provide the webserver of image for main container
+  #Eg. webserver: ghcr.io/bevel-supplychain-corda:springboot-latest
+  webserver: ghcr.io/hyperledger/bevel-supplychain-corda:springboot-latest
   #Provide the name of image for init container
   #Eg. name: adopfrablockchain.azurecr.io/alpine-utils:1.0
-  initContainerName: 
+  initContainer: ghcr.io/hyperledger/bevel-alpine:latest
   #Provide the image pull secret of image
   #Eg. pullSecret: regcred
   imagePullSecret: 
-  privateCertificate: true
 
 smartContract:
   #Provide the smart contract name you need to execute
@@ -41,12 +29,7 @@ smartContract:
   path: 
   #Provide java option
   #Eg. JAVA_OPTIONS : -Xmx512m  
-  JAVA_OPTIONS : -Xmx512m  
-
-volume:
-  #Provide the base path
-  #Eg. mountPath: "/opt/corda"
-  mountPath: 
+  JAVA_OPTIONS : -Xmx512m
   
 nodeConf:
   #Provide the Name of the corda node for node.conf
@@ -55,32 +38,28 @@ nodeConf:
   #Provide the node Rpc Port for node
   #Eg. nodeRpcPort: 10008
   nodeRpcPort: 
-  #Provide the node Rpc Admin Port for node
-  #Eg. nodeRpcAdminPort: 10108
-  nodeRpcAdminPort: 
-  controllerName: Controller
-  trustStorePath: 
-  trustStoreProvider: jks
   #Provide the legalName for node
   #Eg. legalName: "O=Bank1,L=London,C=GB,CN=Bank1"
   legalName: 
   #Provide the devMode for corda node
   #Eg. devMode: true
   devMode: false
-  #Provide the useHTTPS for corda node
-  #Eg. useHTTPS: false
-  useHTTPS: false
-  useSSL: false  
-  tlsAlias: cordaclienttls
-  ssl:
-    certificatesDirectory: 
-    sslKeystoreFileName: 
-    ssltruststore: 
+  useSSL: false
+  #Provide the interval in seconds you want to iterate till node to be ready
+  #Eg. readinessCheckInterval: 5
+  readinessCheckInterval: 10
+  #Provide the threshold till you want to check if specified node up and running
+  #Eg. readinessThreshold: 2
+  readinessThreshold: 15
 
 credentials:
   #Provide the rpcUser for corda node
   #Eg. rpcUser: bank1operations
   rpcUser: 
+  # Provide the password for the RPC User
+  rpcUserPassword: 
+  keystorePassword: 
+  truststorePassword: 
 
 resources:
   #Provide the limit memory for node
@@ -100,7 +79,6 @@ storage:
 
 web:
 # Note: Target ports are dependent on image being used. Please change them accordingly 
-#       nodePort should be kept empty while using service type as ClusterIP ( Values.service.type ) 
   #Provide the web port for node
   #Eg. port: 10009
   port: 
@@ -110,58 +88,3 @@ web:
   #Provide the web targetPort for node 
   #Eg. targetPort: 10004
   targetPort: 20001
-
-networkservices:
-  # Name of the doorman
-  # Eg. doorman: doorman
-  doorman:
-  # Name of the networkmap
-  # Eg. networkmap: networkmap
-  networkmap:
-
-service:
-# Note: Target ports are dependent on image being used. Please change them accordingly 
-#       nodePort should be kept empty while using service type as ClusterIP ( Values.service.type ) 
-  #Provide the type of service
-  #Eg. type: NodePort or LoadBalancer etc
-  type: NodePort
-  #   annotations:
-  #     key: "value"
-  annotations: {}
-
-deployment:
-  #   annotations:
-  #     key: "value"
-  annotations: {}
-
-pvc:
-  #   annotations:
-  #     key: "value"
-  annotations: {}
-  
-vault:
-  #Provide the vault server address
-  #Eg. address: http://54.226.163.39:8200
-  address: 
-  #Provide the vaultrole
-  #Eg. role: vault-role
-  role: 
-  #Provide the authpath
-  #Eg. authpath: cordabank1
-  authpath: 
-  #Provide the serviceaccountname
-  #Eg. serviceaccountname: vault-auth-issuer
-  serviceaccountname: 
-  #Provide the secretprefix
-  #Eg. secretprefix: issuer
-  secretprefix: 
-  keystoresecretprefix: 
-  rpcusersecretprefix: 
-
-node:
-  #Provide the interval in seconds you want to iterate till node to be ready
-  #Eg. readinesscheckinterval: 5
-  readinesscheckinterval: 10
-  #Provide the threshold till you want to check if specified node up and running
-  #Eg. readinessthreshold: 2
-  readinessthreshold: 15
