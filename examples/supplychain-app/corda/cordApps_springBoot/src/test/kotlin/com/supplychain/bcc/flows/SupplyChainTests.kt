@@ -11,7 +11,7 @@ import java.util.*
 
 abstract class SupplyChainTests {
     lateinit var mockNetwork: MockNetwork
-     lateinit  var a: StartedMockNode
+    lateinit var a: StartedMockNode
     lateinit var b: StartedMockNode
     lateinit var c: StartedMockNode
 

@@ -6,7 +6,7 @@
 
 charts:
   restserver: fabric-restserver
-  expressapi: expressapp
+  expressapi-corda: expressapp
   expressapi-fabric: expressapp
   webserver: springbootwebserver
   webserver-ent: springbootwebserver

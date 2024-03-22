@@ -6,15 +6,15 @@ metadata:
   annotations:
     fluxcd.io/automated: "false"
 spec:
-  releaseName: {{ name }}{{ network.type }}-expressapi
+  releaseName: {{ name }}-expressapi
   interval: 1m
   chart:
-   spec:
-    chart: {{ component_gitops.chart_source }}/expressapp-besu
-    sourceRef:
-      kind: GitRepository
-      name: flux-{{ network.env.type }}-app
-      namespace: flux-{{ network.env.type }}-app
+    spec:
+      chart: {{ component_gitops.chart_source }}/expressapp-besu
+      sourceRef:
+        kind: GitRepository
+        name: flux-{{ network.env.type }}-app
+        namespace: flux-{{ network.env.type }}-app
   values:
     nodeName: {{ name }}-expressapi
     metadata:

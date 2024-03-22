@@ -6,7 +6,7 @@ metadata:
   annotations:
     fluxcd.io/automated: "false"
 spec:
-  releaseName: {{ peer_name }}{{ network.type }}-frontend
+  releaseName: {{ peer_name }}-frontend
   interval: 1m
   chart:
    spec:
@@ -16,24 +16,17 @@ spec:
       name: flux-{{ network.env.type }}-app
       namespace: flux-{{ network.env.type }}-app
   values:
-    nodeName: {{ peer_name }}-frontend
-    metadata:
-      namespace: {{ component_ns }}
-    replicaCount: 1
     frontend:
-      serviceType: ClusterIP
       nodePorts:
         port: {{ peer_frontend_port }}
         targetPort: {{ peer_frontend_targetport }}
       image: {{ network.docker.url }}/bevel-supplychain-frontend:1.0.0
       pullPolicy: IfNotPresent
       pullSecrets: regcred
-      env:
-        webserver: https://{{ peer_name }}api.{{ organization_data.external_url_suffix }}
+      apiURL: https://{{ peer_name }}api.{{ organization_data.external_url_suffix }}
     deployment:
       annotations: {}
     proxy:
       provider: {{ network.env.proxy }}
       peer_name: {{ peer_name }}
       external_url_suffix: {{ organization_data.external_url_suffix }}
-      ambassador_secret: {{ ambassador_secret }}
