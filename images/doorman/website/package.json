@@ -34,7 +34,7 @@
     "brunch": "^4.0.0",
     "clean-css-brunch": "^3.0.0",
     "json-brunch": "1.5.4",
-    "pug": "^3.0.1",
+    "pug": "^3.0.3",
     "pugjs-brunch": "2.10.2",
     "react-dom": "^16.14.0",
     "rimraf": "^2.6.3",
